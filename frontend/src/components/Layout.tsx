@@ -11,11 +11,11 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 
 const NAV_LINKS = [
   { name: 'Dashboard', path: '/dashboard', icon: 'dashboard' },
-  { name: 'Decisions', path: '/decision-engine', icon: 'insights' },
-  { name: 'Forecast', path: '/forecast', icon: 'query_stats' },
-  { name: 'Transactions', path: '/transactions', icon: 'receipt_long' },
-  { name: 'Invoices', path: '/invoices', icon: 'description' },
-  { name: 'Actions', path: '/actions', icon: 'bolt' },
+  { name: 'Decisions', path: '/dashboard/decision-engine', icon: 'insights' },
+  { name: 'Forecast', path: '/dashboard/forecast', icon: 'query_stats' },
+  { name: 'Transactions', path: '/dashboard/transactions', icon: 'receipt_long' },
+  { name: 'Invoices', path: '/dashboard/invoices', icon: 'description' },
+  { name: 'Actions', path: '/dashboard/actions', icon: 'bolt' },
 ];
 
 export default function Layout() {
@@ -82,7 +82,7 @@ export default function Layout() {
         {/* Settings Link */}
         <div className="mt-auto p-3 border-t border-slate-200/40">
           <NavLink
-            to="/settings"
+            to="/dashboard/settings"
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               cn(
@@ -98,6 +98,32 @@ export default function Layout() {
           </NavLink>
         </div>
       </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="flex items-center justify-between p-4 bg-transparent">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2 hover:bg-white/50 rounded-lg transition-colors"
+          >
+            <span className="material-symbols-outlined">menu</span>
+          </button>
+          <div className="flex-1" />
+          <div className="flex items-center gap-4">
+            <NotificationCenter />
+            <ProfileDropdown />
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 p-4 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden bg-surface">
