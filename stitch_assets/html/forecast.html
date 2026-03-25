@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CashMind - Forecast</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#b4c5ff",
+              "primary": "#004ac6",
+              "inverse-surface": "#2d3133",
+              "on-tertiary": "#ffffff",
+              "on-secondary-fixed": "#00174b",
+              "on-error": "#ffffff",
+              "on-primary-fixed-variant": "#003ea8",
+              "outline-variant": "#c3c6d7",
+              "on-surface": "#191c1e",
+              "surface-tint": "#0053db",
+              "on-primary-container": "#eeefff",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e6e8eb",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed-variant": "#31447b",
+              "secondary": "#495c95",
+              "error-container": "#ffdad6",
+              "surface-container": "#eceef1",
+              "on-tertiary-fixed-variant": "#7d2d00",
+              "surface-dim": "#d8dadd",
+              "tertiary": "#943700",
+              "surface": "#f7f9fc",
+              "surface-container-low": "#f2f4f7",
+              "inverse-primary": "#b4c5ff",
+              "primary-container": "#2563eb",
+              "primary-fixed": "#dbe1ff",
+              "on-primary-fixed": "#00174b",
+              "on-surface-variant": "#434655",
+              "on-secondary": "#ffffff",
+              "inverse-on-surface": "#eff1f4",
+              "tertiary-container": "#bc4800",
+              "error": "#ba1a1a",
+              "surface-bright": "#f7f9fc",
+              "on-tertiary-container": "#ffede6",
+              "on-tertiary-fixed": "#360f00",
+              "background": "#f7f9fc",
+              "tertiary-fixed": "#ffdbcd",
+              "secondary-container": "#acbfff",
+              "on-error-container": "#93000a",
+              "primary-fixed-dim": "#b4c5ff",
+              "tertiary-fixed-dim": "#ffb596",
+              "surface-variant": "#e0e3e6",
+              "outline": "#737686",
+              "surface-container-highest": "#e0e3e6",
+              "on-background": "#191c1e",
+              "on-secondary-container": "#394c84",
+              "secondary-fixed": "#dbe1ff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .neuromorphic-card {
+        background: #ffffff;
+        box-shadow: -4px -4px 12px rgba(255, 255, 255, 0.8), 4px 4px 12px rgba(180, 190, 210, 0.3);
+      }
+      .inset-shadow {
+        box-shadow: inset 1px 1px 2px rgba(0,0,0,0.05);
+      }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 border-r-0 bg-[#f2f4f7] dark:bg-slate-900 flex flex-col h-full p-4 gap-2 font-manrope antialiased tracking-tight shadow-[4px_0_12px_rgba(180,190,210,0.3)] dark:shadow-none sticky top-0 shrink-0">
+<div class="flex items-center gap-3 px-2 mb-8 mt-2">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-[#004ac6] dark:text-blue-400">CashMind</h1>
+<p class="text-[10px] uppercase tracking-[0.1em] text-slate-500 font-bold">Financial Architect</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<!-- Decisions -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-medium">Decisions</span>
+</a>
+<!-- Forecast (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#004ac6] dark:text-blue-400 shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)] rounded-xl font-semibold scale-[0.98] active:scale-95 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+<span class="font-medium">Forecast</span>
+</a>
+<!-- Transactions -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-medium">Transactions</span>
+</a>
+<!-- Invoices -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-medium">Invoices</span>
+</a>
+<!-- Actions -->
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+<span class="font-medium">Actions</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-4 py-3 mt-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-white/40 rounded-2xl border border-white/60">
+<div class="flex items-center gap-3 mb-3">
+<img alt="User Profile" class="w-8 h-8 rounded-full bg-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2JW8uV7glRoGiqCtC2hFLgsTmxUW9ScnxjEBXTS9iA58Gpptzu2nHIhaKGziyjpm5DIhmR6C_LQRyfLPwuKtxjhoTFaYx9xBk18clvehz38IL8_RHhG_lyPzLE6WwoDVwijPViXCcZSn6nXhSTu0Ikvf6TAM2QHpsI24aiWFmIcBg7pmP29MBNRxOqUDwW1V3utQvMn0GIU9anb1W6bJoEZn8JwEWXTB8IpfWV5NBQtS06vMrsDuMbYakj1wS6tzP1FdppOkadQzs"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold truncate">Alex Sterling</p>
+<p class="text-[10px] text-slate-500 truncate">CFO, Tech Ventures</p>
+</div>
+</div>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-container transition-colors">
+                UPGRADE PRO
+            </button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+<!-- TopNavBar -->
+<header class="w-full h-16 flex justify-between items-center px-8 w-full border-b border-slate-200/50 dark:border-slate-800 bg-[#f7f9fc] dark:bg-slate-950 font-manrope text-sm sticky top-0 z-10">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-blue-500/20 rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-sm inset-shadow focus:bg-surface-container-lowest focus:ring-0 transition-all" placeholder="Search accounts, forecasts or invoices..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-white/50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-8 w-px bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold text-on-surface">Main Account</p>
+<p class="text-[10px] text-primary font-semibold">$1,248,390.42</p>
+</div>
+<img alt="User Profile" class="w-9 h-9 rounded-xl border-2 border-white shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx6Pt0mjd3softWqmpFSD0Zpc1I72ktzeQr3yUF7jkjVdfkGvelGtN0-TBb6vt5b3bLZk69CrUhMR1gNsXYIyDyzcugzy4IoYCncTz5obs6D9cZ2T9MOg8BW_Sarsn8nLF_0ruj-Ih08cZqsF9ChLVb8b3n_MWLE9jzfFVLRWbJboiu1543xJ7rt7tJgDnb0g5mLtVITqeS62wrf78kgtJH1iEzyMMXJ60tystH6RjkoqRo057bMuHyjtCE6efiZt8pLd9_xpFExf8"/>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<!-- Header Section -->
+<div class="flex justify-between items-end">
+<div>
+<span class="label-sm text-[10px] uppercase font-bold tracking-widest text-primary/60 mb-1 block">Predictive Analytics</span>
+<h2 class="text-3xl font-extrabold font-headline tracking-tight text-on-surface">Cash Flow Forecast</h2>
+</div>
+<div class="flex gap-3">
+<div class="bg-surface-container-low p-1 rounded-xl flex gap-1 inset-shadow">
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-primary">30 Days</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:bg-white/50">90 Days</button>
+<button class="px-4 py-1.5 text-xs font-bold rounded-lg text-slate-500 hover:bg-white/50">12 Months</button>
+</div>
+<button class="bg-primary hover:bg-primary-container text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="ios_share">ios_share</span>
+                        Export Report
+                    </button>
+</div>
+</div>
+<!-- Risk Metrics - Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Shortfall Probability -->
+<div class="neuromorphic-card p-6 rounded-2xl border border-white/40">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-error-container/20 rounded-lg">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+</div>
+<span class="text-[10px] font-bold text-error bg-error/10 px-2 py-0.5 rounded-full">-2.4% vs LY</span>
+</div>
+<p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Shortfall Prob.</p>
+<p class="text-3xl font-extrabold font-headline text-on-surface">12.4%</p>
+<div class="mt-4 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 12.4%"></div>
+</div>
+</div>
+<!-- Median Days to Zero -->
+<div class="neuromorphic-card p-6 rounded-2xl border border-white/40">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="timer">timer</span>
+</div>
+</div>
+<p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Median Days to Zero</p>
+<p class="text-3xl font-extrabold font-headline text-on-surface">142</p>
+<p class="text-[10px] text-slate-400 mt-2 font-medium">Safe operating zone (90+ days)</p>
+</div>
+<!-- Worst Case Cash -->
+<div class="neuromorphic-card p-6 rounded-2xl border border-white/40">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-amber-100 rounded-lg">
+<span class="material-symbols-outlined text-amber-600" data-icon="trending_down">trending_down</span>
+</div>
+<span class="text-[10px] font-bold text-amber-600">P10 Confidence</span>
+</div>
+<p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Worst Case Cash</p>
+<p class="text-3xl font-extrabold font-headline text-on-surface">$842k</p>
+<p class="text-[10px] text-slate-400 mt-2 font-medium">Estimated for Dec 31, 2024</p>
+</div>
+<!-- Best Case Cash -->
+<div class="neuromorphic-card p-6 rounded-2xl border border-white/40">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-emerald-100 rounded-lg">
+<span class="material-symbols-outlined text-emerald-600" data-icon="trending_up">trending_up</span>
+</div>
+<span class="text-[10px] font-bold text-emerald-600">P90 Confidence</span>
+</div>
+<p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Best Case Cash</p>
+<p class="text-3xl font-extrabold font-headline text-on-surface">$2.15M</p>
+<p class="text-[10px] text-slate-400 mt-2 font-medium">Estimated for Dec 31, 2024</p>
+</div>
+</div>
+<!-- Monte Carlo Cash Flow Chart -->
+<section class="neuromorphic-card p-8 rounded-3xl border border-white/40">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-lg font-bold font-headline">Monte Carlo Simulation</h3>
+<p class="text-sm text-slate-500">Probabilistic outcomes based on 10,000 iterations of current burn vs. receivables</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="text-xs font-semibold text-slate-600">Expected</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-slate-200"></span>
+<span class="text-xs font-semibold text-slate-600">Confidence Band</span>
+</div>
+</div>
+</div>
+<div class="relative h-[400px] w-full bg-surface-container-low/30 rounded-2xl overflow-hidden flex items-end px-4 gap-2">
+<!-- Faux Monte Carlo Chart Rendering -->
+<div class="absolute inset-0 p-8 flex flex-col justify-between">
+<div class="w-full border-t border-slate-200 border-dashed relative">
+<span class="absolute -top-3 left-0 text-[10px] font-bold text-slate-400 bg-surface px-2">$2.5M</span>
+</div>
+<div class="w-full border-t border-slate-200 border-dashed relative">
+<span class="absolute -top-3 left-0 text-[10px] font-bold text-slate-400 bg-surface px-2">$2.0M</span>
+</div>
+<div class="w-full border-t border-slate-200 border-dashed relative">
+<span class="absolute -top-3 left-0 text-[10px] font-bold text-slate-400 bg-surface px-2">$1.5M</span>
+</div>
+<div class="w-full border-t border-primary/20 border-dashed relative">
+<span class="absolute -top-3 left-0 text-[10px] font-bold text-primary bg-surface px-2">$1.2M (Current)</span>
+</div>
+<div class="w-full border-t border-slate-200 border-dashed relative">
+<span class="absolute -top-3 left-0 text-[10px] font-bold text-slate-400 bg-surface px-2">$500k</span>
+</div>
+<div class="w-full border-t border-error/30 relative">
+<span class="absolute -top-3 right-0 text-[10px] font-bold text-error bg-surface px-2">LIQUIDITY CRITICAL ZONE</span>
+</div>
+</div>
+<!-- Chart Visualization (Faux SVG Overlay approach) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" preserveaspectratio="none" viewbox="0 0 1000 400">
+<!-- Confidence Band -->
+<path d="M0,250 L100,240 L200,230 L300,260 L400,240 L500,200 L600,180 L700,220 L800,160 L900,130 L1000,100 L1000,300 L900,280 L800,320 L700,350 L600,320 L500,340 L400,380 L300,360 L200,340 L100,330 L0,320 Z" fill="url(#band-grad)" fill-opacity="0.3"></path>
+<!-- Main Path -->
+<path d="M0,285 L100,280 L200,275 L300,290 L400,270 L500,240 L600,220 L700,250 L800,190 L900,160 L1000,140" fill="none" stroke="#004ac6" stroke-linecap="round" stroke-width="4"></path>
+<!-- Markers -->
+<circle cx="500" cy="240" fill="#004ac6" r="6" stroke="white" stroke-width="2"></circle>
+<text fill="#004ac6" font-family="Inter" font-size="12" font-weight="bold" x="515" y="230">Oct 15 (Expected: $1.8M)</text>
+<defs>
+<lineargradient id="band-grad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#2563eb"></stop>
+<stop offset="100%" stop-color="#94a3b8"></stop>
+</lineargradient>
+</defs>
+</svg>
+<!-- X-Axis Labels -->
+<div class="absolute bottom-4 left-0 right-0 flex justify-between px-8 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+<span>Sept 01</span>
+<span>Sept 15</span>
+<span>Oct 01</span>
+<span>Oct 15</span>
+<span>Nov 01</span>
+<span>Nov 15</span>
+<span>Dec 01</span>
+<span>Dec 15</span>
+</div>
+</div>
+</section>
+<!-- Bottom Tables -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Daily Projection Table -->
+<div class="neuromorphic-card rounded-2xl border border-white/40 flex flex-col overflow-hidden">
+<div class="p-6 border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-bold font-headline">7-Day Run Rate</h3>
+<button class="text-primary text-xs font-bold hover:underline">Full Projection</button>
+</div>
+<div class="p-0">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cash In</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cash Out</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Balance</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4 text-sm font-semibold">Sept 01</td>
+<td class="px-6 py-4 text-sm text-emerald-600 font-medium">+$14,200</td>
+<td class="px-6 py-4 text-sm text-error font-medium">-$8,400</td>
+<td class="px-6 py-4 text-sm font-bold text-right">$1,254,190</td>
+</tr>
+<tr class="hover:bg-surface transition-colors bg-surface-container-low/30">
+<td class="px-6 py-4 text-sm font-semibold">Sept 02</td>
+<td class="px-6 py-4 text-sm text-slate-400">—</td>
+<td class="px-6 py-4 text-sm text-error font-medium">-$12,100</td>
+<td class="px-6 py-4 text-sm font-bold text-right">$1,242,090</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4 text-sm font-semibold">Sept 03</td>
+<td class="px-6 py-4 text-sm text-emerald-600 font-medium">+$42,000</td>
+<td class="px-6 py-4 text-sm text-error font-medium">-$2,200</td>
+<td class="px-6 py-4 text-sm font-bold text-right">$1,281,890</td>
+</tr>
+<tr class="hover:bg-surface transition-colors bg-surface-container-low/30">
+<td class="px-6 py-4 text-sm font-semibold">Sept 04</td>
+<td class="px-6 py-4 text-sm text-slate-400">—</td>
+<td class="px-6 py-4 text-sm text-error font-medium">-$5,000</td>
+<td class="px-6 py-4 text-sm font-bold text-right">$1,276,890</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Receivables Risk Table -->
+<div class="neuromorphic-card rounded-2xl border border-white/40 flex flex-col overflow-hidden">
+<div class="p-6 border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-bold font-headline">Receivables Risk Index</h3>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="text-[10px] font-bold text-error uppercase">High Priority</span>
+</div>
+</div>
+<div class="p-0">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Debtor</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Amount</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Due Date</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Risk</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4">
+<p class="text-sm font-bold">Lumina Systems</p>
+<p class="text-[10px] text-slate-400">INV-94021</p>
+</td>
+<td class="px-6 py-4 text-sm font-bold">$124,000</td>
+<td class="px-6 py-4 text-sm text-slate-600">Aug 24</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-1 bg-error/10 text-error text-[10px] font-bold rounded-full">85% CRITICAL</span>
+</td>
+</tr>
+<tr class="hover:bg-surface transition-colors bg-surface-container-low/30">
+<td class="px-6 py-4">
+<p class="text-sm font-bold">Solaris Global</p>
+<p class="text-[10px] text-slate-400">INV-94044</p>
+</td>
+<td class="px-6 py-4 text-sm font-bold">$82,500</td>
+<td class="px-6 py-4 text-sm text-slate-600">Sept 12</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">42% MEDIUM</span>
+</td>
+</tr>
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4">
+<p class="text-sm font-bold">Cloud Arch</p>
+<p class="text-[10px] text-slate-400">INV-94108</p>
+</td>
+<td class="px-6 py-4 text-sm font-bold">$210,000</td>
+<td class="px-6 py-4 text-sm text-slate-600">Sept 28</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">12% LOW</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB - Hide for Forecast page as per Suppression rules, but keeping visual logic for completeness if needed in different context. Currently Suppressed based on "focused task" -->
+</body></html>

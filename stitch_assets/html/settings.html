@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - CashMind Financial Architect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "primary": "#004ac6",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#00174b",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "outline-variant": "#c3c6d7",
+                        "on-surface": "#191c1e",
+                        "surface-tint": "#0053db",
+                        "on-primary-container": "#eeefff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e6e8eb",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#31447b",
+                        "secondary": "#495c95",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eceef1",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-dim": "#d8dadd",
+                        "tertiary": "#943700",
+                        "surface": "#f7f9fc",
+                        "surface-container-low": "#f2f4f7",
+                        "inverse-primary": "#b4c5ff",
+                        "primary-container": "#2563eb",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed": "#00174b",
+                        "on-surface-variant": "#434655",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#eff1f4",
+                        "tertiary-container": "#bc4800",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f7f9fc",
+                        "on-tertiary-container": "#ffede6",
+                        "on-tertiary-fixed": "#360f00",
+                        "background": "#f7f9fc",
+                        "tertiary-fixed": "#ffdbcd",
+                        "secondary-container": "#acbfff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-variant": "#e0e3e6",
+                        "outline": "#737686",
+                        "surface-container-highest": "#e0e3e6",
+                        "on-background": "#191c1e",
+                        "on-secondary-container": "#394c84",
+                        "secondary-fixed": "#dbe1ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-ui-shadow {
+            shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)];
+        }
+        .inner-inset-shadow {
+            box-shadow: inset 2px 2px 5px rgba(180, 190, 210, 0.4), inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #004ac6;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 74, 198, 0.2);
+            margin-top: -8px;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e6e8eb;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<div class="flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 border-r-0 bg-[#f2f4f7] dark:bg-slate-900 flex flex-col p-4 gap-2 font-manrope antialiased tracking-tight shadow-[4px_0_12px_rgba(180,190,210,0.3)] sticky top-0">
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl">C</div>
+<div class="flex flex-col">
+<span class="text-xl font-bold text-[#004ac6] dark:text-blue-400">CashMind</span>
+<span class="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">Financial Architect</span>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-medium">Decisions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-medium">Forecast</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-medium">Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-medium">Invoices</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-[#e6e8eb] dark:hover:bg-slate-800 transition-all duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+<span class="font-medium">Actions</span>
+</a>
+<!-- Active Tab: Settings -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-[#004ac6] dark:text-blue-400 shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)] rounded-xl font-semibold scale-[0.98] active:scale-95 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="mt-auto p-2 bg-surface-container-high rounded-2xl flex items-center gap-3">
+<img alt="User Profile" class="w-10 h-10 rounded-lg object-cover" data-alt="Close-up portrait of a professional male architect in a bright modern office setting, neutral tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAyEdy-DDCozaYB6GCPJ195hZ5tJOmboZfJFjBxPqPTpGVLD5zLfAZKPunhrsIeelTftZxZXyojRTpSAqA4_Ee_z2jNOyvZq6_mC9N-IwwUV3OEmYiMAPC6qcQoQu2fj8lAlvvu8to0VuZLERUDpDYSR0zRg-Z4LfqViHgBvZAgCNoqZn8lIMSHudOhtNf2O9r_SRYInj56wND0mR0ch0k-tZCJ3DfpxQcLnwweeJCo0rMiG6utoW-Y7XtAOhDJMytdUeiavzRFpg-"/>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-bold truncate">Julian Thorne</span>
+<span class="text-[10px] text-slate-500 truncate font-semibold">Senior Treasurer</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto">
+<!-- TopNavBar Component -->
+<header class="flex justify-between items-center px-8 w-full h-16 border-b border-slate-200/50 dark:border-slate-800 bg-[#f7f9fc] dark:bg-slate-950 font-manrope text-sm sticky top-0 z-10">
+<div class="flex items-center gap-4 flex-1 max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-0 rounded-xl focus:ring-2 focus:ring-blue-500/20 text-sm transition-all" placeholder="Search configurations..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 hover:bg-white/50 dark:hover:bg-slate-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-slate-600" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-[#f7f9fc]"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<div class="flex items-center gap-3">
+<span class="font-bold text-primary">Configuration</span>
+</div>
+</div>
+</header>
+<!-- Settings Content Canvas -->
+<div class="p-8 max-w-7xl mx-auto">
+<div class="mb-10">
+<h1 class="text-4xl font-extrabold font-headline tracking-tight text-on-surface mb-2">System Architecture</h1>
+<p class="text-on-surface-variant font-body">Fine-tune your financial engine and API integrations.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Section: Connected Accounts (6 cols) -->
+<section class="md:col-span-7 bg-surface-container-lowest rounded-2xl p-6 shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)]">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-lg font-bold font-headline flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="api">api</span>
+                                Connected Accounts
+                            </h2>
+<button class="text-primary text-xs font-bold uppercase tracking-wider hover:underline">Add New API</button>
+</div>
+<div class="space-y-4">
+<!-- Bank API -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<p class="font-bold text-sm">Open Banking Hub</p>
+<p class="text-xs text-on-surface-variant">Connected to 14 Institutions</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase tracking-tight">Active</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+<!-- GST Integration -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary" data-icon="receipt">receipt</span>
+</div>
+<div>
+<p class="font-bold text-sm">GST Portal</p>
+<p class="text-xs text-on-surface-variant">Direct Filing Enabled</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase tracking-tight">Active</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+<!-- WhatsApp -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[#25D366]" data-icon="chat">chat</span>
+</div>
+<div>
+<p class="font-bold text-sm">WhatsApp Business</p>
+<p class="text-xs text-on-surface-variant">Instant Notifications</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase tracking-tight">Active</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+<!-- Razorpay -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl group hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="font-bold text-sm">Razorpay Checkout</p>
+<p class="text-xs text-on-surface-variant">Live Mode Enabled</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-1 bg-surface-container-highest text-outline text-[10px] font-bold rounded uppercase tracking-tight">Paused</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: AHP Criteria Weight Sliders (5 cols) -->
+<section class="md:col-span-5 bg-surface-container-lowest rounded-2xl p-6 shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)]">
+<div class="mb-6">
+<h2 class="text-lg font-bold font-headline flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="balance">balance</span>
+                                AHP Allocation Weights
+                            </h2>
+<p class="text-xs text-on-surface-variant mt-1">Adjust Analytical Hierarchy Process priorities.</p>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex justify-between mb-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Liquidity Priority</label>
+<span class="text-xs font-bold text-primary">85%</span>
+</div>
+<input class="w-full appearance-none bg-transparent" type="range" value="85"/>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Risk Mitigation</label>
+<span class="text-xs font-bold text-primary">45%</span>
+</div>
+<input class="w-full appearance-none bg-transparent" type="range" value="45"/>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Growth Velocity</label>
+<span class="text-xs font-bold text-primary">60%</span>
+</div>
+<input class="w-full appearance-none bg-transparent" type="range" value="60"/>
+</div>
+<div>
+<div class="flex justify-between mb-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Operational Cost</label>
+<span class="text-xs font-bold text-primary">30%</span>
+</div>
+<input class="w-full appearance-none bg-transparent" type="range" value="30"/>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/20">
+<p class="text-[10px] text-on-surface-variant italic">Note: Weight adjustments will recalculate the Forecast engine in real-time.</p>
+</div>
+</section>
+<!-- Section: Alert Threshold Settings (5 cols) -->
+<section class="md:col-span-5 bg-surface-container-lowest rounded-2xl p-6 shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)]">
+<div class="mb-6">
+<h2 class="text-lg font-bold font-headline flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="notification_important">notification_important</span>
+                                Alert Thresholds
+                            </h2>
+</div>
+<div class="space-y-5">
+<div class="p-4 bg-surface rounded-xl inner-inset-shadow">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Cash Reserve Floor</label>
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-400">$</span>
+<input class="w-full bg-transparent border-0 p-0 font-bold text-on-surface focus:ring-0" type="text" value="250,000.00"/>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-xl inner-inset-shadow">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Max Transaction Variance</label>
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-400">%</span>
+<input class="w-full bg-transparent border-0 p-0 font-bold text-on-surface focus:ring-0" type="text" value="12.5"/>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-xl inner-inset-shadow">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-on-surface-variant mb-1">Days Payable Outstanding (Target)</label>
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-400">D</span>
+<input class="w-full bg-transparent border-0 p-0 font-bold text-on-surface focus:ring-0" type="text" value="45"/>
+</div>
+</div>
+<div class="flex items-center justify-between px-2">
+<span class="text-xs font-semibold text-on-surface-variant">Enable Push Notifications</span>
+<div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer shadow-inner">
+<div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Vendor Relationship Profiles (7 cols) -->
+<section class="md:col-span-7 bg-surface-container-lowest rounded-2xl p-6 shadow-[-4px_-4px_12px_rgba(255,255,255,0.8),4px_4px_12px_rgba(180,190,210,0.3)]">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-lg font-bold font-headline flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="partner_reports">partner_reports</span>
+                                Vendor Relationship Profiles
+                            </h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="p-4 bg-surface rounded-2xl border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="factory">factory</span>
+</div>
+<span class="font-bold text-sm">Strategic Supply</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px]">
+<span class="text-on-surface-variant">Priority</span>
+<span class="text-primary font-bold">Tier 1</span>
+</div>
+<div class="flex justify-between text-[10px]">
+<span class="text-on-surface-variant">Payment Cycle</span>
+<span class="font-semibold text-on-surface">Net 30</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-2xl border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-sm" data-icon="cloud">cloud</span>
+</div>
+<span class="font-bold text-sm">Digital Services</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px]">
+<span class="text-on-surface-variant">Priority</span>
+<span class="text-primary font-bold">Tier 2</span>
+</div>
+<div class="flex justify-between text-[10px]">
+<span class="text-on-surface-variant">Payment Cycle</span>
+<span class="font-semibold text-on-surface">Auto-Debit</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-2xl border border-transparent hover:border-primary/20 transition-all cursor-pointer">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-orange-600 text-sm" data-icon="local_shipping">local_shipping</span>
+</div>
+<span class="font-bold text-sm">Logistics Fleet</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px]">
+<span class="text-on-surface-variant">Priority</span>
+<span class="text-primary font-bold">Tier 1</span>
+</div>
+<div class="flex justify-between text-[10px]">
+<span class="text-on-surface-variant">Payment Cycle</span>
+<span class="font-semibold text-on-surface">Weekly</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-high border-2 border-dashed border-outline-variant/30 rounded-2xl flex flex-col items-center justify-center text-on-surface-variant gap-1 group hover:bg-surface-container-highest transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-lg" data-icon="add_circle">add_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">New Profile</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Action Bar -->
+<div class="mt-12 flex justify-end items-center gap-4">
+<button class="px-6 py-3 text-on-surface-variant font-bold text-sm hover:text-on-surface transition-colors">Discard Changes</button>
+<button class="px-8 py-3 bg-gradient-to-br from-primary to-primary-container text-white rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 scale-100 hover:scale-[1.02] active:scale-95 transition-all">
+                        Commit Configurations
+                    </button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
