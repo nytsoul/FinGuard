@@ -1,4 +1,90 @@
+import { useState, useRef } from 'react';
+import { importCsv, generateAiTransactionDraft } from '../lib/api';
+
 export default function Transactions() {
+  const [showCsvModal, setShowCsvModal] = useState(false);
+  const [showNewEntryModal, setShowNewEntryModal] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [csvLoading, setCsvLoading] = useState(false);
+  const [csvError, setCsvError] = useState('');
+  const [csvSuccess, setCsvSuccess] = useState('');
+  const [entryType, setEntryType] = useState('expense');
+  const [entryAmount, setEntryAmount] = useState('');
+  const [entryCategory, setEntryCategory] = useState('SaaS');
+  const [entryContext, setEntryContext] = useState('');
+  const [useAiDraft, setUseAiDraft] = useState(false);
+  const [aiDrafting, setAiDrafting] = useState(false);
+  const [aiDraftResult, setAiDraftResult] = useState<any>(null);
+  const [entryError, setEntryError] = useState('');
+  const csvInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCsvFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'text/csv') {
+      setCsvFile(file);
+      setCsvError('');
+    } else {
+      setCsvError('Please select a valid CSV file.');
+      setCsvFile(null);
+    }
+  };
+
+  const handleImportCsv = async () => {
+    if (!csvFile) {
+      setCsvError('Please select a file first.');
+      return;
+    }
+    setCsvLoading(true);
+    setCsvError('');
+    setCsvSuccess('');
+    try {
+      const result = await importCsv(csvFile);
+      setCsvSuccess(`Successfully imported ${result.imported_count} transactions. Skipped: ${result.skipped_count}.`);
+      setCsvFile(null);
+      if (csvInputRef.current) csvInputRef.current.value = '';
+      setTimeout(() => {
+        setShowCsvModal(false);
+        setCsvSuccess('');
+      }, 2000);
+    } catch (error) {
+      setCsvError('Failed to import CSV. Please check the file format and try again.');
+      console.error('CSV import error:', error);
+    } finally {
+      setCsvLoading(false);
+    }
+  };
+
+  const handleGenerateAiDraft = async () => {
+    setAiDrafting(true);
+    setEntryError('');
+    try {
+      const result = await generateAiTransactionDraft(
+        entryType,
+        parseFloat(entryAmount || '0'),
+        entryCategory,
+        entryContext
+      );
+      setAiDraftResult(result);
+    } catch (error) {
+      setEntryError('Failed to generate AI draft. Please try again.');
+      console.error('AI draft error:', error);
+    } finally {
+      setAiDrafting(false);
+    }
+  };
+
+  const handleAddNewEntry = () => {
+    // This would normally save to backend
+    alert(`Entry added: ${aiDraftResult?.vendor_suggestion || entryContext} - $${entryAmount}`);
+    setShowNewEntryModal(false);
+    setEntryType('expense');
+    setEntryAmount('');
+    setEntryCategory('SaaS');
+    setEntryContext('');
+    setUseAiDraft(false);
+    setAiDraftResult(null);
+  };
+
   return (
     <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-8 max-w-[1600px] mx-auto">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
@@ -7,11 +93,17 @@ export default function Transactions() {
           <p className="text-on-surface-variant font-body">Review and reconcile your digital financial footprint.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-          <button className="px-5 py-2.5 bg-surface-container-highest text-on-surface text-sm font-semibold rounded-xl hover:bg-surface-container-high transition-all flex items-center gap-2">
+          <button 
+            onClick={() => setShowCsvModal(true)}
+            className="px-5 py-2.5 bg-surface-container-highest text-on-surface text-sm font-semibold rounded-xl hover:bg-surface-container-high transition-all flex items-center gap-2"
+          >
             <span className="material-symbols-outlined text-base">cloud_upload</span>
             Import CSV
           </button>
-          <button className="px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white text-sm font-semibold rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
+          <button 
+            onClick={() => setShowNewEntryModal(true)}
+            className="px-5 py-2.5 bg-gradient-to-br from-primary to-primary-container text-white text-sm font-semibold rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2"
+          >
             <span className="material-symbols-outlined text-base">add</span>
             New Entry
           </button>
@@ -340,6 +432,225 @@ export default function Transactions() {
           </div>
         </div>
       </div>
+
+      {/* CSV Import Modal */}
+      {showCsvModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-on-surface">Import CSV</h3>
+              <button 
+                onClick={() => setShowCsvModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {csvError && (
+              <div className="p-3 bg-error/10 border border-error rounded-lg text-error text-sm">
+                {csvError}
+              </div>
+            )}
+
+            {csvSuccess && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm">
+                ✓ {csvSuccess}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Select CSV File</label>
+                <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                  <input 
+                    ref={csvInputRef}
+                    type="file" 
+                    accept=".csv" 
+                    onChange={handleCsvFileSelect}
+                    className="hidden"
+                  />
+                  <button 
+                    onClick={() => csvInputRef.current?.click()}
+                    className="text-center w-full"
+                  >
+                    <span className="material-symbols-outlined text-4xl text-slate-400 block mb-2">upload_file</span>
+                    <p className="text-sm font-semibold text-slate-600">Click to upload CSV</p>
+                    <p className="text-xs text-slate-400 mt-1">or drag and drop</p>
+                    {csvFile && <p className="text-xs text-primary font-semibold mt-2">✓ {csvFile.name}</p>}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs text-slate-500 mb-2">Expected columns: vendor, amount, date, category, account</p>
+                <a href="#" className="text-primary text-xs font-bold hover:underline">Download template</a>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button 
+                onClick={() => setShowCsvModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-on-surface font-semibold hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleImportCsv}
+                disabled={csvLoading || !csvFile}
+                className="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container disabled:opacity-50"
+              >
+                {csvLoading ? 'Importing...' : 'Import'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Entry Modal */}
+      {showNewEntryModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-on-surface">New Entry</h3>
+              <button 
+                onClick={() => setShowNewEntryModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {entryError && (
+              <div className="p-3 bg-error/10 border border-error rounded-lg text-error text-sm">
+                {entryError}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Type</label>
+                <select 
+                  value={entryType}
+                  onChange={(e) => setEntryType(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="expense">Expense</option>
+                  <option value="income">Income</option>
+                  <option value="transfer">Transfer</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Amount (USD)</label>
+                <input 
+                  type="number" 
+                  value={entryAmount}
+                  onChange={(e) => setEntryAmount(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Category</label>
+                <select 
+                  value={entryCategory}
+                  onChange={(e) => setEntryCategory(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="SaaS">SaaS</option>
+                  <option value="Payroll">Payroll</option>
+                  <option value="Office">Office</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Travel">Travel</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Description/Context</label>
+                <textarea 
+                  value={entryContext}
+                  onChange={(e) => setEntryContext(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  rows={3}
+                  placeholder="e.g., 'Monthly subscription renewal with 20% discount'"
+                />
+              </div>
+
+              <label className="flex items-center gap-3 cursor-pointer p-3 bg-primary/5 rounded-lg border border-primary/20">
+                <input 
+                  type="checkbox" 
+                  checked={useAiDraft}
+                  onChange={(e) => {
+                    setUseAiDraft(e.target.checked);
+                    if (!e.target.checked) setAiDraftResult(null);
+                  }}
+                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20 accent-primary"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-on-surface">Use AI Smart Drafting</p>
+                  <p className="text-xs text-slate-500">Let AI suggest vendor and description</p>
+                </div>
+              </label>
+
+              {useAiDraft && !aiDraftResult && (
+                <button 
+                  onClick={handleGenerateAiDraft}
+                  disabled={aiDrafting || !entryAmount || !entryContext}
+                  className="w-full px-4 py-2 bg-gradient-to-br from-primary to-blue-600 text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-base">auto_awesome</span>
+                  {aiDrafting ? 'Generating...' : 'Generate with AI'}
+                </button>
+              )}
+
+              {aiDraftResult && (
+                <div className="bg-slate-50 p-4 rounded-lg border border-primary/20 space-y-2">
+                  <p className="text-xs text-slate-500 font-semibold">AI Suggestions:</p>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-xs font-semibold text-slate-600">Vendor:</span>
+                      <p className="font-semibold text-on-surface">{aiDraftResult.vendor_suggestion}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-600">Description:</span>
+                      <p className="font-semibold text-on-surface">{aiDraftResult.description}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-slate-600">Category Confidence:</span>
+                      <p className="font-semibold text-primary">{(aiDraftResult.category_confidence * 100).toFixed(0)}%</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setAiDraftResult(null)}
+                    className="w-full text-xs text-slate-500 hover:text-slate-700 mt-2"
+                  >
+                    Regenerate
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button 
+                onClick={() => setShowNewEntryModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-on-surface font-semibold hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleAddNewEntry}
+                disabled={!entryAmount}
+                className="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container disabled:opacity-50"
+              >
+                Add Entry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

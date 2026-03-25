@@ -1,6 +1,6 @@
 export default function Invoices() {
   return (
-    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 w-full space-y-8">
       {/* Page Header & Action Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
@@ -20,9 +20,9 @@ export default function Invoices() {
       </div>
 
       {/* Tabs & Quick Stats Bento */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Tab Switcher (Architectural Card) */}
-        <div className="lg:col-span-8 neumorphic-card bg-white rounded-2xl p-2 flex">
+        <div className="lg:col-span-2 neumorphic-card bg-white rounded-2xl p-2 flex">
           <button className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-primary text-white font-bold transition-all shadow-lg shadow-primary/20">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
             Payables
@@ -34,7 +34,7 @@ export default function Invoices() {
         </div>
 
         {/* Match Status Summary */}
-        <div className="lg:col-span-4 neumorphic-card bg-white rounded-2xl p-6 flex items-center justify-between">
+        <div className="lg:col-span-2 neumorphic-card bg-white rounded-2xl p-6 flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Integrity Check</span>
             <span className="text-lg font-bold text-on-surface">Match Status</span>
@@ -174,10 +174,10 @@ export default function Invoices() {
         </div>
 
         {/* Receivables Asymmetric Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Primary Data Card (Large) */}
-          <div className="md:col-span-2 neumorphic-card bg-white rounded-2xl overflow-hidden p-6">
+          <div className="lg:col-span-2 neumorphic-card bg-white rounded-2xl overflow-hidden p-6">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px] text-left">
               <thead className="border-b border-slate-100">

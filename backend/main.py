@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import transactions, invoices, forecast, decisions, actions, payments
+from routers import transactions, invoices, forecast, decisions, actions, payments, reports, imports, strategies
 
 app = FastAPI(title="CashMind Open API", version="1.0.0")
 
@@ -18,6 +18,9 @@ app.include_router(forecast.router)
 app.include_router(decisions.router)
 app.include_router(actions.router)
 app.include_router(payments.router)
+app.include_router(reports.router)
+app.include_router(imports.router)
+app.include_router(strategies.router)
 
 @app.get("/")
 def read_root():

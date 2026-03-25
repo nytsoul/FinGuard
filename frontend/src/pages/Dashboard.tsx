@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import CashFlowChart from '../components/CashFlowChart';
+import { getMitigationStrategy } from '../lib/api';
 
 const CHART_DATA = [
   { name: 'AUG 01', current: 0, w1: 40, w2: 55, w3: 45, expected: 50 },
@@ -9,8 +11,44 @@ const CHART_DATA = [
 ];
 
 export default function Dashboard() {
+  const [showStrategyModal, setShowStrategyModal] = useState(false);
+  const [strategyLoading, setStrategyLoading] = useState(false);
+  const [strategyData, setStrategyData] = useState<any>(null);
+  const [selectedScenario, setSelectedScenario] = useState('current');
+  const [strategyError, setStrategyError] = useState('');
+
+  const handleViewStrategy = async () => {
+    setShowStrategyModal(true);
+    setStrategyLoading(true);
+    setStrategyError('');
+    try {
+      const data = await getMitigationStrategy(selectedScenario as 'current' | 'pessimistic' | 'optimistic');
+      setStrategyData(data);
+    } catch (error) {
+      setStrategyError('Failed to load mitigation strategy. Please try again.');
+      console.error('Strategy fetch error:', error);
+    } finally {
+      setStrategyLoading(false);
+    }
+  };
+
+  const handleScenarioChange = async (scenario: string) => {
+    setSelectedScenario(scenario);
+    setStrategyLoading(true);
+    setStrategyError('');
+    try {
+      const data = await getMitigationStrategy(scenario as 'current' | 'pessimistic' | 'optimistic');
+      setStrategyData(data);
+    } catch (error) {
+      setStrategyError('Failed to load scenario data.');
+      console.error('Scenario fetch error:', error);
+    } finally {
+      setStrategyLoading(false);
+    }
+  };
+
   return (
-    <div className="overflow-y-auto p-4 lg:p-8 space-y-6 lg:space-y-8 max-w-[1600px] mx-auto">
+    <div className="overflow-y-auto p-4 lg:p-8 space-y-6 lg:space-y-8 w-full">
       {/* Top Row: Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {/* Cash Balance */}
@@ -66,14 +104,16 @@ export default function Dashboard() {
       </div>
 
       {/* Middle Section: Chart & Risk */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
-      {/* Cash Flow Chart Section */}
-      <div className="lg:col-span-2">
+      <div className="space-y-6 lg:space-y-8">
+      {/* Cash Flow Chart Section - Full Width */}
+      <div className="w-full">
         <CashFlowChart data={CHART_DATA} title="Daily Cash Flow Projection" showLegend={true} />
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
+
         {/* Risk Alert Panel */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 lg:col-span-1">
           <div className="neumorphic-card p-8 bg-error/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <span className="material-symbols-outlined text-8xl" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
@@ -86,7 +126,10 @@ export default function Dashboard() {
             <p className="text-sm text-on-surface-variant font-roboto mb-6 leading-relaxed">
               Projected outflow from <span className="font-bold font-poppins text-on-surface">Amazon AWS</span> and <span className="font-bold font-poppins text-on-surface">Office Lease</span> exceeds expected receivables by <span className="text-error font-bold">$12,400</span>.
             </p>
-            <button className="w-full py-4 bg-error text-white rounded-xl font-bold font-inter shadow-lg shadow-error/20 hover:scale-[1.02] active:scale-95 transition-all">
+            <button 
+              onClick={handleViewStrategy}
+              className="w-full py-4 bg-error text-white rounded-xl font-bold font-inter shadow-lg shadow-error/20 hover:scale-[1.02] active:scale-95 transition-all"
+            >
               VIEW MITIGATION STRATEGY
             </button>
           </div>
@@ -111,6 +154,8 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+
       </div>
 
       {/* Bottom Section: Tables */}
@@ -243,6 +288,134 @@ export default function Dashboard() {
         <span className="material-symbols-outlined text-3xl">add</span>
         <span className="absolute right-full mr-4 bg-on-surface text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">New Transaction</span>
       </button>
+
+      {/* Mitigation Strategy Modal */}
+      {showStrategyModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6 sticky top-0 bg-white border-b border-slate-100 flex justify-between items-center">
+              <h3 className="text-2xl font-bold text-on-surface">Mitigation Strategy</h3>
+              <button 
+                onClick={() => setShowStrategyModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Scenario Selector */}
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-3">Select Scenario</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { value: 'current', label: 'Current', desc: 'Based on current forecast' },
+                    { value: 'pessimistic', label: 'Pessimistic', desc: 'Worst case scenario' },
+                    { value: 'optimistic', label: 'Optimistic', desc: 'Best case scenario' }
+                  ].map(scenario => (
+                    <button
+                      key={scenario.value}
+                      onClick={() => handleScenarioChange(scenario.value)}
+                      className={`p-3 rounded-lg border-2 transition-all text-left ${
+                        selectedScenario === scenario.value
+                          ? 'border-primary bg-primary/5'
+                          : 'border-slate-200 bg-white hover:border-primary/50'
+                      }`}
+                    >
+                      <p className="font-semibold text-sm text-on-surface">{scenario.label}</p>
+                      <p className="text-xs text-slate-500">{scenario.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {strategyError && (
+                <div className="p-3 bg-error/10 border border-error rounded-lg text-error text-sm">
+                  {strategyError}
+                </div>
+              )}
+
+              {strategyLoading && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="text-center">
+                    <div className="inline-block w-8 h-8 border-4 border-slate-200 border-t-primary rounded-full animate-spin mb-2"></div>
+                    <p className="text-sm text-slate-500">Loading strategy...</p>
+                  </div>
+                </div>
+              )}
+
+              {strategyData && !strategyLoading && (
+                <div className="space-y-6">
+                  {/* Risk Assessment */}
+                  <div className="bg-slate-50 p-4 rounded-lg space-y-2">
+                    <h4 className="font-semibold text-on-surface">Risk Assessment</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-slate-600 mb-1">Risk Level</p>
+                        <p className="text-lg font-bold text-on-surface">{strategyData.risk_level}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-600 mb-1">Days to Critical</p>
+                        <p className="text-lg font-bold text-error">{strategyData.days_to_critical} days</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-600 mb-1">Shortfall Probability</p>
+                        <p className="text-lg font-bold text-on-surface">{(strategyData.shortfall_probability * 100).toFixed(1)}%</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recommendations */}
+                  <div>
+                    <h4 className="font-semibold text-on-surface mb-3">Recommended Actions</h4>
+                    <div className="space-y-3">
+                      {strategyData.recommendations?.map((rec: any, idx: number) => (
+                        <div key={idx} className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0">
+                              <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary text-white text-xs font-bold">
+                                {rec.priority}
+                              </span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-semibold text-sm text-on-surface mb-1">{rec.action}</p>
+                              <p className="text-xs text-slate-600">{rec.description}</p>
+                              {rec.estimated_impact && (
+                                <p className="text-xs font-semibold text-primary mt-2">
+                                  Impact: {rec.estimated_impact}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Summary */}
+                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-lg">
+                    <p className="text-sm text-emerald-900">
+                      <span className="font-semibold">Summary:</span> By following these recommendations, you can improve your cash position by an estimated <span className="font-bold">${strategyData.estimated_improvement || 'TBD'}</span> and reduce risk by <span className="font-bold">{strategyData.risk_reduction || 'TBD'}</span>.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t border-slate-100">
+                <button 
+                  onClick={() => setShowStrategyModal(false)}
+                  className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-on-surface font-semibold hover:bg-slate-50"
+                >
+                  Close
+                </button>
+                <button className="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container">
+                  Export Strategy
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

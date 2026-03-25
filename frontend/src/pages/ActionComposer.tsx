@@ -1,4 +1,59 @@
+import { useState } from 'react';
+import { sendEmail, sendWhatsApp } from '../lib/api';
+
 export default function ActionComposer() {
+  const [subject, setSubject] = useState('URGENT: Outstanding Balance for TechFlow Consultations');
+  const [messageContent, setMessageContent] = useState(`Dear Marcus,
+
+I hope you're having a productive week.
+
+We are writing to kindly remind you of the outstanding balance for invoice #8842, which was due on the 15th of last month. As your financial architects, we want to ensure your cash flow remains optimized and avoid any late penalty fees.
+
+The total amount due is $12,450.00.
+
+You can complete the payment via your portal dashboard or the link attached below. If you have already made the transfer, please disregard this message.
+
+Best regards,\nThe CashMind Team`);
+  const [recipientEmail, setRecipientEmail] = useState('marcus.h@techflow.io');
+  const [recipientPhone, setRecipientPhone] = useState('+44 7700 900231');
+  const [emailSending, setEmailSending] = useState(false);
+  const [whatsAppSending, setWhatsAppSending] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [useWhatsApp, setUseWhatsApp] = useState(false);
+
+  const handleSendEmail = async () => {
+    setEmailSending(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+    try {
+      const result = await sendEmail(recipientEmail, subject, messageContent);
+      setSuccessMessage(`Email sent successfully! Delivery ID: ${(result as any).delivery_id}`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } catch (error) {
+      setErrorMessage('Failed to send email. Please check recipient address and try again.');
+      console.error('Email send error:', error);
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
+  const handleSendWhatsApp = async () => {
+    setWhatsAppSending(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+    try {
+      const result = await sendWhatsApp(recipientPhone, messageContent);
+      setSuccessMessage(`WhatsApp message sent! Message ID: ${(result as any).message_id}`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } catch (error) {
+      setErrorMessage('Failed to send WhatsApp message. Please check phone number and try again.');
+      console.error('WhatsApp send error:', error);
+    } finally {
+      setWhatsAppSending(false);
+    }
+  };
+
   return (
     <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-8 h-[calc(100vh-4rem)]">
       <div className="flex flex-col md:flex-row gap-8 items-start h-full pb-8">
@@ -72,12 +127,34 @@ export default function ActionComposer() {
             </div>
 
             <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Email Address</label>
+                  <input 
+                    className="w-full bg-surface-container-low p-4 rounded-xl border-none text-on-surface neumorphic-inset focus:ring-2 focus:ring-primary/20" 
+                    type="email" 
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Phone (WhatsApp)</label>
+                  <input 
+                    className="w-full bg-surface-container-low p-4 rounded-xl border-none text-on-surface neumorphic-inset focus:ring-2 focus:ring-primary/20" 
+                    type="tel" 
+                    value={recipientPhone}
+                    onChange={(e) => setRecipientPhone(e.target.value)}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Subject Line</label>
                 <input 
                   className="w-full bg-surface-container-low p-4 rounded-xl border-none font-bold text-on-surface neumorphic-inset focus:ring-2 focus:ring-primary/20" 
                   type="text" 
-                  defaultValue="URGENT: Outstanding Balance for TechFlow Consultations"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                 />
               </div>
               
@@ -86,32 +163,59 @@ export default function ActionComposer() {
                 <textarea 
                   className="w-full bg-surface-container-low p-4 rounded-xl border-none text-on-surface neumorphic-inset focus:ring-2 focus:ring-primary/20 leading-relaxed" 
                   rows={8}
-                  defaultValue={`Dear Marcus,\n\nI hope you're having a productive week.\n\nWe are writing to kindly remind you of the outstanding balance for invoice #8842, which was due on the 15th of last month. As your financial architects, we want to ensure your cash flow remains optimized and avoid any late penalty fees.\n\nThe total amount due is $12,450.00.\n\nYou can complete the payment via your portal dashboard or the link attached below. If you have already made the transfer, please disregard this message.\n\nBest regards,\nThe CashMind Team`}
+                  value={messageContent}
+                  onChange={(e) => setMessageContent(e.target.value)}
                 />
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-6">
+                {successMessage && (
+                  <div className="w-full p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 text-sm font-semibold">
+                    ✓ {successMessage}
+                  </div>
+                )}
+                {errorMessage && (
+                  <div className="w-full p-3 bg-error/10 border border-error rounded-lg text-error text-sm font-semibold">
+                    ✗ {errorMessage}
+                  </div>
+                )}
+                <div className="w-full flex items-center gap-6">
                   <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className="w-5 h-5 rounded border-2 border-primary flex items-center justify-center group-hover:bg-primary/5">
-                      <div className="w-2.5 h-2.5 bg-primary rounded-sm"></div>
+                    <div 
+                      className={`w-5 h-5 rounded border-2 ${!useWhatsApp ? 'border-primary bg-primary/10' : 'border-slate-300'} flex items-center justify-center`}
+                      onClick={() => setUseWhatsApp(false)}
+                    >
+                      {!useWhatsApp && <div className="w-2.5 h-2.5 bg-primary rounded-sm"></div>}
                     </div>
                     <span className="text-sm font-semibold">Email</span>
                   </label>
                   
                   <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className="w-5 h-5 rounded border-2 border-slate-300 flex items-center justify-center"></div>
-                    <span className="text-sm font-semibold text-slate-500">SMS</span>
+                    <div 
+                      className={`w-5 h-5 rounded border-2 ${useWhatsApp ? 'border-[#25D366] bg-[#25D366]/10' : 'border-slate-300'} flex items-center justify-center`}
+                      onClick={() => setUseWhatsApp(true)}
+                    >
+                      {useWhatsApp && <div className="w-2.5 h-2.5 bg-[#25D366] rounded-sm"></div>}
+                    </div>
+                    <span className={`text-sm font-semibold ${useWhatsApp ? '' : 'text-slate-500'}`}>WhatsApp</span>
                   </label>
                 </div>
                 
-                <div className="flex gap-3">
-                  <button className="px-6 py-3 bg-[#25D366] text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#25D366]/20 hover:scale-[1.02] active:scale-95 transition-all">
+                <div className="flex gap-3 ml-auto">
+                  <button 
+                    onClick={handleSendWhatsApp}
+                    disabled={whatsAppSending}
+                    className="px-6 py-3 bg-[#25D366] text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#25D366]/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                  >
                     <span className="material-symbols-outlined fill" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
-                    Send via WhatsApp
+                    {whatsAppSending ? 'Sending...' : 'Send via WhatsApp'}
                   </button>
-                  <button className="px-8 py-3 bg-gradient-to-br from-primary to-[#003ea8] text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                    Send Email
+                  <button 
+                    onClick={handleSendEmail}
+                    disabled={emailSending}
+                    className="px-8 py-3 bg-gradient-to-br from-primary to-[#003ea8] text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                  >
+                    {emailSending ? 'Sending...' : 'Send Email'}
                   </button>
                 </div>
               </div>

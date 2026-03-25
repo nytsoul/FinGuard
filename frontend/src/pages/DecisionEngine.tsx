@@ -1,4 +1,80 @@
+import { useState } from 'react';
+import { generateReport, executePayment, exportReportPdf } from '../lib/api';
+
+interface Report {
+  report_id: string;
+  report_type: string;
+  format: string;
+  data: {
+    title: string;
+    sections: string[];
+    metrics: { [key: string]: string | number };
+    recommendations: string[];
+  };
+  created_at: string;
+}
+
 export default function DecisionEngine() {
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [generatedReport, setGeneratedReport] = useState<Report | null>(null);
+  const [reportType, setReportType] = useState('financial');
+  const [dateRange, setDateRange] = useState('30');
+  const [paymentVendor, setPaymentVendor] = useState('Global Logistics');
+  const [paymentAmount, setPaymentAmount] = useState('42300');
+  const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
+  const [paymentError, setPaymentError] = useState('');
+  const [reportError, setReportError] = useState('');
+  const [exportingPdf, setExportingPdf] = useState(false);
+
+  const handleGenerateReport = async () => {
+    setReportLoading(true);
+    setReportError('');
+    try {
+      const report = await generateReport(reportType, `${dateRange}d`);
+      setGeneratedReport(report as any);
+    } catch (error) {
+      setReportError('Failed to generate report. Please try again.');
+      console.error('Report generation error:', error);
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    setExportingPdf(true);
+    try {
+      await exportReportPdf();
+    } catch (error) {
+      setReportError('Failed to export PDF. Please try again.');
+      console.error('PDF export error:', error);
+    } finally {
+      setExportingPdf(false);
+    }
+  };
+
+  const handleExecutePayment = async () => {
+    setPaymentLoading(true);
+    setPaymentError('');
+    try {
+      const result = await executePayment(
+        paymentVendor, 
+        parseFloat(paymentAmount), 
+        undefined as any, 
+        paymentMethod
+      );
+      alert(`Payment executed successfully! Reference: ${(result as any).reference_number}`);
+      setShowPaymentModal(false);
+    } catch (error) {
+      setPaymentError('Failed to execute payment. Please try again.');
+      console.error('Payment execution error:', error);
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
+
   return (
     <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
       {/* Page Title */}
@@ -8,10 +84,16 @@ export default function DecisionEngine() {
           <h2 className="text-3xl font-extrabold font-headline text-on-surface -mt-1">Decision Engine</h2>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button className="px-5 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-semibold text-sm transition-transform active:scale-95 shadow-sm">
+          <button 
+            onClick={() => setShowReportModal(true)}
+            className="px-5 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-semibold text-sm transition-transform active:scale-95 shadow-sm hover:bg-surface-container-higher"
+          >
             Generate Report
           </button>
-          <button className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-semibold text-sm transition-transform active:scale-95 shadow-lg shadow-primary/20">
+          <button 
+            onClick={() => setShowPaymentModal(true)}
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-semibold text-sm transition-transform active:scale-95 shadow-lg shadow-primary/20 hover:shadow-lg hover:shadow-primary/30"
+          >
             Execute Payment
           </button>
         </div>
@@ -326,6 +408,185 @@ export default function DecisionEngine() {
         {/* Decorative Element */}
         <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
       </section>
+
+      {/* Report Generation Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-on-surface">Generate Report</h3>
+              <button 
+                onClick={() => setShowReportModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+            
+            {reportError && (
+              <div className="p-3 bg-error/10 border border-error rounded-lg text-error text-sm">
+                {reportError}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Report Type</label>
+                <select 
+                  value={reportType}
+                  onChange={(e) => setReportType(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="financial">Financial Summary</option>
+                  <option value="liquidity">Liquidity Analysis</option>
+                  <option value="obligations">Obligations Report</option>
+                  <option value="cash_flow">Cash Flow Forecast</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Date Range (days)</label>
+                <select 
+                  value={dateRange}
+                  onChange={(e) => setDateRange(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="7">Last 7 days</option>
+                  <option value="30">Last 30 days</option>
+                  <option value="90">Last 90 days</option>
+                  <option value="365">Last year</option>
+                </select>
+              </div>
+            </div>
+
+            {generatedReport && (
+              <div className="bg-slate-50 p-4 rounded-lg space-y-2 max-h-48 overflow-y-auto">
+                <h4 className="font-semibold text-on-surface">{generatedReport.data.title}</h4>
+                <div className="text-sm text-slate-600 space-y-1">
+                  {generatedReport.data.recommendations.slice(0, 3).map((rec, idx) => (
+                    <p key={idx} className="flex items-start gap-2">
+                      <span className="text-primary font-bold">•</span>
+                      <span>{rec}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-4">
+              <button 
+                onClick={() => setShowReportModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-on-surface font-semibold hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              {generatedReport ? (
+                <button 
+                  onClick={handleExportPdf}
+                  disabled={exportingPdf}
+                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:opacity-50"
+                >
+                  {exportingPdf ? 'Exporting...' : 'Export PDF'}
+                </button>
+              ) : (
+                <button 
+                  onClick={handleGenerateReport}
+                  disabled={reportLoading}
+                  className="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container disabled:opacity-50"
+                >
+                  {reportLoading ? 'Generating...' : 'Generate'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Execution Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-on-surface">Execute Payment</h3>
+              <button 
+                onClick={() => setShowPaymentModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            {paymentError && (
+              <div className="p-3 bg-error/10 border border-error rounded-lg text-error text-sm">
+                {paymentError}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Vendor</label>
+                <select 
+                  value={paymentVendor}
+                  onChange={(e) => setPaymentVendor(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="Global Logistics">Global Logistics - $42,300</option>
+                  <option value="Prime Realty">Prime Realty - $85,000</option>
+                  <option value="Tech Systems Inc.">Tech Systems Inc. - $12,000</option>
+                  <option value="Swift Media">Swift Media - $4,200</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Amount (USD)</label>
+                <input 
+                  type="number" 
+                  value={paymentAmount}
+                  onChange={(e) => setPaymentAmount(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-on-surface mb-2">Payment Method</label>
+                <select 
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="credit_card">Credit Card</option>
+                  <option value="ach">ACH Transfer</option>
+                  <option value="check">Check</option>
+                  <option value="wire">Wire Transfer</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-3 rounded-lg">
+              <p className="text-xs text-slate-500 mb-1">Total Amount</p>
+              <p className="text-2xl font-bold text-primary">${parseFloat(paymentAmount || '0').toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button 
+                onClick={() => setShowPaymentModal(false)}
+                className="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-on-surface font-semibold hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleExecutePayment}
+                disabled={paymentLoading}
+                className="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-container disabled:opacity-50"
+              >
+                {paymentLoading ? 'Processing...' : 'Execute Payment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
