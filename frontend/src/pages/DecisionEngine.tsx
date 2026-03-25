@@ -1,6 +1,6 @@
 export default function DecisionEngine() {
   return (
-    <div className="p-8 flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
+    <div className="overflow-y-auto p-8 flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
       {/* Page Title */}
       <div className="flex justify-between items-end">
         <div>

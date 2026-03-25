@@ -1,6 +1,6 @@
 export default function Invoices() {
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
       {/* Page Header & Action Bar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>

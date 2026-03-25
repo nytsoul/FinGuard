@@ -57,10 +57,12 @@ export default {
         "secondary-fixed": "#dbe1ff"
       },
       fontFamily: {
-        "headline": ["Manrope", "sans-serif"],
-        "body": ["Inter", "sans-serif"],
+        "headline": ["Poppins", "sans-serif"],
+        "body": ["Roboto", "sans-serif"],
         "label": ["Inter", "sans-serif"],
-        "manrope": ["Manrope", "sans-serif"],
+        "poppins": ["Poppins", "sans-serif"],
+        "roboto": ["Roboto", "sans-serif"],
+        "inter": ["Inter", "sans-serif"],
       },
       borderRadius: {
         "DEFAULT": "0.25rem",

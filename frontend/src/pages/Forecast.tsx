@@ -27,7 +27,7 @@ const formatCurrency = (value: number) => {
 
 export default function Forecast() {
   return (
-    <div className="p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
       {/* Header Section */}
       <div className="flex justify-between items-end">
         <div>

@@ -1,6 +1,6 @@
 export default function Transactions() {
   return (
-    <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
+    <div className="overflow-y-auto p-8 space-y-8 max-w-[1600px] mx-auto">
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-extrabold font-headline tracking-tight text-on-surface">Transactions</h2>
