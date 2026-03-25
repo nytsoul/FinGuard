@@ -1,18 +1,11 @@
-import { 
-  ResponsiveContainer, 
-  ComposedChart, 
-  Bar, 
-  XAxis, 
-  Tooltip, 
-  ReferenceLine 
-} from 'recharts';
+import CashFlowChart from '../components/CashFlowChart';
 
 const CHART_DATA = [
-  { name: 'AUG 01', current: 0, w1: 40, w2: 55, w3: 45 },
-  { name: 'AUG 08', current: 65, w1: 0, w2: 0, w3: 0 },
-  { name: 'AUG 15', current: 0, expected: 50, expected2: 30, expected3: 35 },
-  { name: 'AUG 22', current: 0, risk: 20 },
-  { name: 'AUG 31', current: 0, expected: 40, expected2: 55 },
+  { name: 'AUG 01', current: 0, w1: 40, w2: 55, w3: 45, expected: 50 },
+  { name: 'AUG 08', current: 65, w1: 0, w2: 0, w3: 0, expected: 60 },
+  { name: 'AUG 15', current: 0, expected: 50, expected2: 30, expected3: 35, forecast: 48 },
+  { name: 'AUG 22', current: 0, risk: 20, forecast: 35 },
+  { name: 'AUG 31', current: 0, expected: 40, expected2: 55, forecast: 52 },
 ];
 
 export default function Dashboard() {
@@ -74,37 +67,10 @@ export default function Dashboard() {
 
       {/* Middle Section: Chart & Risk */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
-        {/* Cash Flow Chart Card */}
-        <div className="lg:col-span-2 neumorphic-card p-4 lg:p-8 flex flex-col min-h-[350px] lg:min-h-[450px]">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h3 className="text-2xl font-bold font-poppins text-on-surface">Cash Flow Projection</h3>
-              <p className="text-sm text-slate-500 font-roboto">30-day forecasted liquidity based on recurring cycles</p>
-            </div>
-            <div className="flex gap-2">
-              <button className="px-3 py-1.5 text-xs font-semibold font-inter rounded-lg neumorphic-inset text-primary">30 DAYS</button>
-              <button className="px-3 py-1.5 text-xs font-semibold font-inter rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">90 DAYS</button>
-            </div>
-          </div>
-          
-          <div className="flex-1 w-full relative">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={CHART_DATA} margin={{ top: 20, right: 0, bottom: 0, left: 0 }} barGap={2}>
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 700 }} dy={10} />
-                <Tooltip cursor={{ fill: 'transparent' }} />
-                <Bar dataKey="w1" fill="#eceef1" stackId="a" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="w2" fill="#eceef1" stackId="b" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="w3" fill="#eceef1" stackId="c" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="current" fill="#2563eb" stackId="d" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="expected" fill="#dbe1ff" stackId="e" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="expected2" fill="#dbe1ff" stackId="f" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="expected3" fill="#dbe1ff" stackId="g" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="risk" fill="#ffdad6" stackId="h" radius={[8, 8, 0, 0]} />
-                <ReferenceLine y={0} stroke="#e2e8f0" />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      {/* Cash Flow Chart Section */}
+      <div className="lg:col-span-2">
+        <CashFlowChart data={CHART_DATA} title="Daily Cash Flow Projection" showLegend={true} />
+      </div>
 
         {/* Risk Alert Panel */}
         <div className="flex flex-col gap-6">
