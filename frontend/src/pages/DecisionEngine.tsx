@@ -1,13 +1,13 @@
 export default function DecisionEngine() {
   return (
-    <div className="overflow-y-auto p-8 flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
       {/* Page Title */}
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary">Intelligence Hub</span>
           <h2 className="text-3xl font-extrabold font-headline text-on-surface -mt-1">Decision Engine</h2>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <button className="px-5 py-2.5 rounded-xl bg-surface-container-highest text-on-surface font-semibold text-sm transition-transform active:scale-95 shadow-sm">
             Generate Report
           </button>

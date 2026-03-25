@@ -1,12 +1,12 @@
 export default function Transactions() {
   return (
-    <div className="overflow-y-auto p-8 space-y-8 max-w-[1600px] mx-auto">
-      <div className="flex justify-between items-end">
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-8 max-w-[1600px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h2 className="text-3xl font-extrabold font-headline tracking-tight text-on-surface">Transactions</h2>
           <p className="text-on-surface-variant font-body">Review and reconcile your digital financial footprint.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
           <button className="px-5 py-2.5 bg-surface-container-highest text-on-surface text-sm font-semibold rounded-xl hover:bg-surface-container-high transition-all flex items-center gap-2">
             <span className="material-symbols-outlined text-base">cloud_upload</span>
             Import CSV
@@ -98,18 +98,19 @@ export default function Transactions() {
                 <button className="text-primary hover:underline">EXPORT PAGE</button>
               </div>
             </div>
-            
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-surface-container-low border-b border-slate-100">
-                  <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Date & Vendor</th>
-                  <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase text-right">Amount</th>
-                  <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Category & Source</th>
-                  <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Match</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[960px] text-left border-collapse">
+                <thead>
+                  <tr className="bg-surface-container-low border-b border-slate-100">
+                    <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Date & Vendor</th>
+                    <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase text-right">Amount</th>
+                    <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Category & Source</th>
+                    <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Status</th>
+                    <th className="px-6 py-4 text-[10px] font-label font-bold text-slate-500 tracking-wider uppercase">Match</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
                 {/* Row 1 */}
                 <tr className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
@@ -250,12 +251,13 @@ export default function Transactions() {
                   </td>
                 </tr>
               </tbody>
-            </table>
+              </table>
+            </div>
             
             {/* Pagination */}
-            <div className="p-6 bg-surface flex items-center justify-between border-t border-slate-100">
+            <div className="p-6 bg-surface flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-slate-100">
               <button className="px-4 py-2 bg-white rounded-lg text-xs font-bold shadow-sm hover:shadow-md transition-shadow disabled:opacity-50">Previous</button>
-              <div className="flex gap-2">
+              <div className="flex gap-2 justify-center sm:justify-start">
                 <button className="w-8 h-8 rounded-lg bg-primary text-white text-xs font-bold shadow-sm">1</button>
                 <button className="w-8 h-8 rounded-lg bg-white hover:bg-slate-50 text-xs font-bold shadow-sm">2</button>
                 <button className="w-8 h-8 rounded-lg bg-white hover:bg-slate-50 text-xs font-bold shadow-sm">3</button>

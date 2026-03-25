@@ -13,7 +13,7 @@ const MONTE_CARLO_DATA = [
 
 export default function Forecast() {
   return (
-    <div className="overflow-y-auto p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-8">
       {/* Main Forecast Chart Component */}
       <ForecastChart data={MONTE_CARLO_DATA} title="Cash Flow Forecast (Monte Carlo Analysis)" showMetrics={true} />
 
@@ -26,16 +26,17 @@ export default function Forecast() {
             <button className="text-primary text-xs font-bold hover:underline">Full Projection</button>
           </div>
           <div className="p-0">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cash In</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cash Out</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100">
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cash In</th>
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cash Out</th>
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4 text-sm font-semibold">Sept 01</td>
                   <td className="px-6 py-4 text-sm text-emerald-600 font-medium">+$14,200</td>
@@ -60,8 +61,9 @@ export default function Forecast() {
                   <td className="px-6 py-4 text-sm text-error font-medium">-$5,000</td>
                   <td className="px-6 py-4 text-sm font-bold text-right">$1,276,890</td>
                 </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -75,16 +77,17 @@ export default function Forecast() {
             </div>
           </div>
           <div className="p-0">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Debtor</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Amount</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Due Date</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Risk</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100">
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Debtor</th>
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Amount</th>
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Due Date</th>
+                    <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Risk</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
                 <tr className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4">
                     <p className="text-sm font-bold">Lumina Systems</p>
@@ -118,8 +121,9 @@ export default function Forecast() {
                     <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">12% LOW</span>
                   </td>
                 </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

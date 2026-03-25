@@ -237,7 +237,7 @@ export default function CashFlowChart({
             </p>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {useApi && (
             <button
               onClick={() => setIsLive((v) => !v)}
