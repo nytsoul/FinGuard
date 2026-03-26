@@ -22,21 +22,25 @@ export default function ProfileDropdown() {
   const displayCompany = userProfile?.company_name || 'No company';
 
   const handleLogout = async () => {
+    setLogoutLoading(true);
+    setIsOpen(false);
+    
     try {
-      setLogoutLoading(true);
-      setIsOpen(false);
-      
       const { error } = await signOut();
       
       if (error) {
         console.error('Logout error:', error);
-        return;
+        // Still navigate even if logout fails - user wants to go to login
       }
       
-      // Navigate after successful logout
+      // Always navigate to login after attempting logout
       navigate('/login', { replace: true });
     } catch (err) {
       console.error('Unexpected logout error:', err);
+      // Still redirect on unexpected errors
+      navigate('/login', { replace: true });
+    } finally {
+      // Ensure loading state is always reset
       setLogoutLoading(false);
     }
   };

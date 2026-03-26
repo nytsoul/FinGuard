@@ -83,15 +83,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      await loadProfile(data.session?.user ?? null);
-      if (mounted) setLoading(false);
-    });
+    // Initialize session with timeout fallback
+    const initAuth = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (!mounted) return;
+        
+        if (error) {
+          console.error('Failed to get session:', error);
+          setSession(null);
+          setUser(null);
+          setUserProfile(null);
+        } else {
+          setSession(data.session);
+          setUser(data.session?.user ?? null);
+          await loadProfile(data.session?.user ?? null);
+        }
+      } catch (err) {
+        console.error('Session initialization error:', err);
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+          setUserProfile(null);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    // Set a timeout to force loading to false after 5 seconds
+    const timeout = setTimeout(() => {
+      if (mounted && loading) {
+        console.warn('Session loading timeout - forcing completion');
+        setLoading(false);
+      }
+    }, 5000);
+
+    initAuth();
 
     const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+      if (!mounted) return;
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
       await loadProfile(nextSession?.user ?? null);
@@ -100,6 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       mounted = false;
+      clearTimeout(timeout);
       subscription.subscription.unsubscribe();
     };
   }, []);

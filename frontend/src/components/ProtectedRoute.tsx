@@ -8,7 +8,12 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   if (loading) {
     return (
       <div className="min-h-screen grid place-items-center bg-surface">
-        <div className="neumorphic-card p-6 text-sm text-slate-600">Loading session...</div>
+        <div className="space-y-4 text-center">
+          <div className="flex justify-center">
+            <div className="w-12 h-12 rounded-full border-4 border-slate-200 border-t-primary animate-spin"></div>
+          </div>
+          <p className="text-sm text-slate-600 font-medium">Verifying your session...</p>
+        </div>
       </div>
     );
   }
