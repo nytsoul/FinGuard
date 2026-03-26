@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { Suspense, lazy } from 'react';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,11 +21,27 @@ const Profile = lazy(() => import('./pages/Profile'));
 const VendorDetail = lazy(() => import('./pages/VendorDetail'));
 const Help = lazy(() => import('./pages/Help'));
 const Preferences = lazy(() => import('./pages/Preferences'));
+=======
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicOnlyRoute from './components/PublicOnlyRoute';
+import Dashboard from './pages/Dashboard';
+import Transactions from './pages/Transactions';
+import Forecast from './pages/Forecast';
+import DecisionEngine from './pages/DecisionEngine';
+import ActionComposer from './pages/ActionComposer';
+import Invoices from './pages/Invoices';
+import Settings from './pages/Settings';
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Register from './pages/Register';
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+<<<<<<< HEAD
         {/* Public Routes with Suspense */}
         <Route 
           path="/" 
@@ -165,6 +182,24 @@ function App() {
         
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
+=======
+        <Route path="/" element={<PublicOnlyRoute><Landing /></PublicOnlyRoute>} />
+        <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+        <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
+
+        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="transactions" element={<Transactions />} />
+          <Route path="forecast" element={<Forecast />} />
+          <Route path="decision-engine" element={<DecisionEngine />} />
+          <Route path="actions" element={<ActionComposer />} />
+          <Route path="invoices" element={<Invoices />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
       </Routes>
     </BrowserRouter>
   );

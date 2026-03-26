@@ -1,10 +1,16 @@
 from fastapi import APIRouter
+<<<<<<< HEAD
 import numpy as np
+=======
+
+from finance_engine import build_full_pipeline
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
 router = APIRouter(prefix="/api/forecast", tags=["Forecast"])
 
 @router.get("/")
 def get_forecast():
+<<<<<<< HEAD
     # Simplified Monte Carlo for the hackathon demo
     np.random.seed(42)
     base_cash = 2450000
@@ -43,4 +49,21 @@ def get_forecast():
             "worst_case_zero": 182,
             "best_case_zero": 310
         }
+=======
+    pipeline = build_full_pipeline()
+    forecast_data = pipeline["forecast"]
+    return {
+        "status": "success",
+        "data": forecast_data.get("data", []),
+        "metrics": forecast_data.get("metrics", {}),
+    }
+
+
+@router.get("/state")
+def get_financial_state():
+    pipeline = build_full_pipeline()
+    return {
+        "status": "success",
+        "data": pipeline["financial_state"],
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
     }

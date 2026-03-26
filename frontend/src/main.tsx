@@ -11,6 +11,7 @@ import '@fontsource/inter/500.css'
 import '@fontsource/inter/600.css'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext.tsx'
+<<<<<<< HEAD
 import ErrorBoundary from './components/ErrorBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
@@ -20,5 +21,13 @@ createRoot(document.getElementById('root')!).render(
         <App />
       </AuthProvider>
     </ErrorBoundary>
+=======
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
   </StrictMode>,
 )

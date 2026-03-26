@@ -17,7 +17,11 @@ export default function Settings() {
   const [pushEnabled, setPushEnabled] = useState(true);
 
   return (
+<<<<<<< HEAD
     <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+=======
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 w-full">
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
       <div className="mb-10">
         <h1 className="text-4xl font-extrabold font-headline tracking-tight text-on-surface mb-2">System Architecture</h1>
         <p className="text-slate-500 font-medium">Fine-tune your financial engine and API integrations.</p>

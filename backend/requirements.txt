@@ -1,5 +1,21 @@
+<<<<<<< HEAD
 fastapi
 uvicorn
 supabase
 numpy
 python-dotenv
+=======
+fastapi>=0.111.0
+uvicorn[standard]
+httpx
+numpy
+python-dotenv
+pytest
+requests
+rapidfuzz
+scipy
+pandas
+xgboost>=2.0
+shap
+pydantic>=2.0
+>>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
