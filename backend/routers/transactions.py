@@ -7,7 +7,10 @@ router = APIRouter(prefix="/api/transactions", tags=["Transactions"])
 @router.get("/")
 def get_transactions():
     pipeline = build_full_pipeline()
-    return pipeline["transactions"]
+    return {
+        "status": "success",
+        "data": pipeline["transactions"],
+    }
 
 @router.get("/{transaction_id}")
 def get_transaction(transaction_id: str):

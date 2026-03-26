@@ -7,7 +7,12 @@ router = APIRouter(prefix="/api/forecast", tags=["Forecast"])
 @router.get("/")
 def get_forecast():
     pipeline = build_full_pipeline()
-    return pipeline["forecast"]
+    forecast_data = pipeline["forecast"]
+    return {
+        "status": "success",
+        "data": forecast_data.get("data", []),
+        "metrics": forecast_data.get("metrics", {}),
+    }
 
 
 @router.get("/state")

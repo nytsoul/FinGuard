@@ -1078,12 +1078,15 @@ def topsis_rank(obligations: List[Dict[str, object]], weights: Dict[str, float])
     for idx, obl in enumerate(obligations):
         score = float(scores[idx])
         reasons = explain_obligation(obl)
+        model_contribs = obl.get("explain_factors", {}).get("model_contributions", [])
         ranked.append(
             {
                 **obl,
                 "topsis_score": round(score, 4),
+                "rank": 0,  # Will be set after sorting
                 "recommendation": "Pay immediately" if score >= 0.75 else "Negotiate or split payment" if score >= 0.45 else "Strategic delay",
                 "explanation": reasons,
+                "model_contributions": model_contribs,
             }
         )
 

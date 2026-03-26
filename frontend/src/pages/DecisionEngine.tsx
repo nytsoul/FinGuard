@@ -125,7 +125,7 @@ export default function DecisionEngine() {
 
               <div className="space-y-2 mb-4">
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Model Attribution</p>
-                {selected.model_contributions.map((c) => (
+                {(selected.model_contributions || []).map((c) => (
                   <div key={c.feature} className="flex items-center gap-2">
                     <span className="text-[10px] text-slate-500 w-32 capitalize font-roboto">{c.feature.replace(/_/g, ' ')}</span>
                     <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
@@ -139,6 +139,9 @@ export default function DecisionEngine() {
                     </span>
                   </div>
                 ))}
+                {(!selected.model_contributions || selected.model_contributions.length === 0) && (
+                  <p className="text-xs text-slate-400 italic">No model contributions available</p>
+                )}
               </div>
 
               <div className="p-3 bg-primary/5 rounded-xl">
