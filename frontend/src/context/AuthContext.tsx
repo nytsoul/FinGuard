@@ -123,10 +123,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
       if (!mounted) return;
-      console.log('Auth state changed:', _event, !!nextSession?.user);
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-      await loadProfile(nextSession?.user ?? null);
+      console.log('🔐 Auth state changed:', _event, !!nextSession?.user);
+      
+      // Explicitly handle logout event
+      if (_event === 'SIGNED_OUT') {
+        console.log('🔐 SIGNED_OUT detected - clearing auth state');
+        setSession(null);
+        setUser(null);
+        setUserProfile(null);
+      } else {
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+        await loadProfile(nextSession?.user ?? null);
+      }
       setLoading(false);
     });
 

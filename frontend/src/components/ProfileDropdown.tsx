@@ -37,17 +37,27 @@ export default function ProfileDropdown() {
         console.log('🔓 Logout successful');
       }
       
-      // Give auth state a moment to update
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('🔓 Clearing local auth state and redirecting...');
+      // Give auth state a moment to fully update
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('🔓 Redirecting to login...');
-      // Navigate to login - use window.location for guaranteed redirect
-      window.location.href = '/login';
+      console.log('🔓 Using React Router navigate');
+      // First try React Router navigate
+      navigate('/login', { replace: true });
+      
+      // As a fallback, reload the page to force client-side session check
+      setTimeout(() => {
+        console.log('🔓 Fallback: full page reload');
+        window.location.reload();
+      }, 1500);
+      
     } catch (err) {
       console.error('🔓 Logout error:', err);
-      // Force redirect even on error
-      console.log('🔓 Force redirecting due to error');
-      window.location.href = '/login';
+      // Force immediate reload on error
+      console.log('🔓 Force page reload due to error');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     }
   };
 
