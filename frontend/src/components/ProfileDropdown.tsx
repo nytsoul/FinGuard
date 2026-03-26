@@ -22,26 +22,32 @@ export default function ProfileDropdown() {
   const displayCompany = userProfile?.company_name || 'No company';
 
   const handleLogout = async () => {
+    console.log('🔓 Logout initiated');
     setLogoutLoading(true);
     setIsOpen(false);
     
     try {
+      // Call logout
+      console.log('🔓 Calling Supabase signOut...');
       const { error } = await signOut();
       
       if (error) {
-        console.error('Logout error:', error);
-        // Still navigate even if logout fails - user wants to go to login
+        console.warn('🔓 Logout warning (still proceeding):', error);
+      } else {
+        console.log('🔓 Logout successful');
       }
       
-      // Always navigate to login after attempting logout
-      navigate('/login', { replace: true });
+      // Give auth state a moment to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      console.log('🔓 Redirecting to login...');
+      // Navigate to login - use window.location for guaranteed redirect
+      window.location.href = '/login';
     } catch (err) {
-      console.error('Unexpected logout error:', err);
-      // Still redirect on unexpected errors
-      navigate('/login', { replace: true });
-    } finally {
-      // Ensure loading state is always reset
-      setLogoutLoading(false);
+      console.error('🔓 Logout error:', err);
+      // Force redirect even on error
+      console.log('🔓 Force redirecting due to error');
+      window.location.href = '/login';
     }
   };
 
