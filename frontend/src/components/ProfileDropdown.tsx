@@ -7,6 +7,10 @@ export default function ProfileDropdown() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
+  if (!user) {
+    return null; // Don't show profile dropdown if user isn't logged in
+  }
+
   const handleLogout = async () => {
     await signOut();
     navigate('/');
@@ -25,6 +29,7 @@ export default function ProfileDropdown() {
       label: 'Preferences',
       icon: 'tune',
       onClick: () => {
+        navigate('/dashboard/preferences');
         setIsOpen(false);
       }
     },
@@ -32,6 +37,7 @@ export default function ProfileDropdown() {
       label: 'Help & Support',
       icon: 'help',
       onClick: () => {
+        navigate('/help');
         setIsOpen(false);
       }
     },

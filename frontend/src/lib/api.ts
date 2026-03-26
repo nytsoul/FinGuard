@@ -128,3 +128,43 @@ export async function generateAiTransactionDraft(transactionType: string, amount
     body: JSON.stringify({ transaction_type: transactionType, amount, category, context })
   });
 }
+
+export type BackendPreferences = {
+  user_id: string;
+  notifications: {
+    email_notifications: boolean;
+    sms_notifications: boolean;
+    push_notifications: boolean;
+    email_frequency: 'immediate' | 'daily' | 'weekly';
+    invoice_alerts: boolean;
+    payment_reminders: boolean;
+    cash_flow_alerts: boolean;
+    vendor_alerts: boolean;
+  };
+  display: {
+    theme: 'light' | 'dark' | 'auto';
+    language: string;
+    date_format: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
+    currency_format: string;
+    items_per_page: number;
+  };
+  financial: {
+    default_payment_term: number;
+    budget_warning_threshold: number;
+    auto_payment_enabled: boolean;
+    auto_payment_threshold: number;
+    reconciliation_method: 'manual' | 'auto' | 'semi-auto';
+    tax_calculation: 'GST' | 'VAT' | 'NONE';
+  };
+};
+
+export async function getUserPreferences(userId: string): Promise<BackendPreferences> {
+  return fetchJson<BackendPreferences>(`/api/preferences/user/${userId}`);
+}
+
+export async function saveUserPreferences(userId: string, payload: BackendPreferences): Promise<BackendPreferences> {
+  return fetchJson<BackendPreferences>(`/api/preferences/user/${userId}`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}

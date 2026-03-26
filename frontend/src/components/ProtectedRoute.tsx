@@ -11,7 +11,8 @@ export default function ProtectedRoute() {
       if (!user) {
         setRedirect('/login');
       } else if (isNewUser) {
-        setRedirect('/onboarding');
+        // New users must complete their profile first
+        setRedirect('/dashboard/profile');
       }
     }
   }, [user, loading, isNewUser]);

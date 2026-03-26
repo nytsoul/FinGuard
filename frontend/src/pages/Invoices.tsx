@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function Invoices() {
+  const navigate = useNavigate();
   return (
     <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 w-full space-y-8">
       {/* Page Header & Action Bar */}
@@ -74,7 +77,12 @@ export default function Invoices() {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center font-bold text-primary group-hover:bg-white inset-shadow">AM</div>
-                      <span className="font-bold text-on-surface">Amazon Web Services</span>
+                      <button
+                        onClick={() => navigate('/dashboard/vendor/amazon-web-services')}
+                        className="font-bold text-primary hover:underline transition-all"
+                      >
+                        Amazon Web Services
+                      </button>
                     </div>
                   </td>
                   <td className="px-6 py-5">
@@ -106,7 +114,12 @@ export default function Invoices() {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center font-bold text-primary group-hover:bg-white inset-shadow">SL</div>
-                      <span className="font-bold text-on-surface">Slack Technologies</span>
+                      <button
+                        onClick={() => navigate('/dashboard/vendor/slack-technologies')}
+                        className="font-bold text-primary hover:underline transition-all"
+                      >
+                        Slack Technologies
+                      </button>
                     </div>
                   </td>
                   <td className="px-6 py-5">
@@ -135,7 +148,12 @@ export default function Invoices() {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center font-bold text-primary group-hover:bg-white inset-shadow">GF</div>
-                      <span className="font-bold text-on-surface">Global Freight Inc.</span>
+                      <button
+                        onClick={() => navigate('/dashboard/vendor/global-freight-inc')}
+                        className="font-bold text-primary hover:underline transition-all"
+                      >
+                        Global Freight Inc.
+                      </button>
                     </div>
                   </td>
                   <td className="px-6 py-5">
@@ -190,7 +208,12 @@ export default function Invoices() {
               <tbody className="divide-y divide-slate-50">
                 <tr>
                   <td className="py-4">
-                    <p className="font-bold text-on-surface">Horizon Retail Group</p>
+                    <button
+                      onClick={() => navigate('/dashboard/vendor/horizon-retail-group')}
+                      className="font-bold text-primary hover:underline transition-all text-left"
+                    >
+                      Horizon Retail Group
+                    </button>
                     <p className="text-[10px] text-slate-500 font-medium">Inv #RET-8821</p>
                   </td>
                   <td className="py-4">

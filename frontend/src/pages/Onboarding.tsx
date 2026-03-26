@@ -26,7 +26,7 @@ const ROLES = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { user, updateProfile } = useAuth();
+  const { updateProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   

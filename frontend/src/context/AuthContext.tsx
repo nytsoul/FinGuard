@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 export interface UserProfile {
@@ -10,6 +10,11 @@ export interface UserProfile {
   role: string;
   avatar_url?: string;
   phone?: string;
+  bank_name?: string;
+  bank_account_number?: string;
+  account_holder_name?: string;
+  pan?: string;
+  aadhar?: string;
   created_at: string;
   updated_at: string;
 }
@@ -21,6 +26,7 @@ interface AuthContextType {
   isNewUser: boolean;
   signUp: (email: string, password: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
+  signInWithGoogle: () => Promise<any>;
   signOut: () => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<any>;
   fetchUserProfile: () => Promise<void>;
@@ -45,20 +51,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error);
-        return;
+      // Error code 'PGRST116' means no rows found - this is expected for new users
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No profile exists yet - user is new
+          setIsNewUser(true);
+          setUserProfile(null);
+          return;
+        } else {
+          // Log actual errors
+          console.warn('Error fetching profile:', error.message || error);
+          setIsNewUser(true);
+          return;
+        }
       }
 
       if (data) {
         setUserProfile(data as UserProfile);
-        setIsNewUser(false);
+        // User is new if they don't have a full_name set
+        setIsNewUser(!data.full_name);
       } else {
-        // New user - no profile yet
+        // No profile record exists yet
         setIsNewUser(true);
+        setUserProfile(null);
       }
-    } catch (err) {
-      console.error('Error fetching user profile:', err);
+    } catch (err: any) {
+      console.warn('Error fetching user profile:', err?.message || err);
+      // Don't throw - assume user is new
+      setIsNewUser(true);
+      setUserProfile(null);
     }
   };
 
@@ -123,6 +144,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { data, error };
   };
 
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    return { data, error };
+  };
+
   // Sign out
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -167,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isNewUser,
         signUp,
         signIn,
+        signInWithGoogle,
         signOut,
         updateProfile,
         fetchUserProfile,

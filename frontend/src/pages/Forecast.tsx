@@ -13,7 +13,7 @@ const MONTE_CARLO_DATA = [
 
 export default function Forecast() {
   return (
-    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 w-full space-y-8">
       {/* Main Forecast Chart Component */}
       <ForecastChart data={MONTE_CARLO_DATA} title="Cash Flow Forecast (Monte Carlo Analysis)" showMetrics={true} />
 
