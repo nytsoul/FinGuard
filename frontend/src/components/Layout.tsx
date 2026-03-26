@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import NotificationCenter from './NotificationCenter';
 import ProfileDropdown from './ProfileDropdown';
+import FallbackBanner from './FallbackBanner';
 
 function cn(...inputs: (string | undefined | null | false)[]) {
   return twMerge(clsx(inputs));
@@ -22,7 +23,9 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen overflow-hidden bg-surface font-roboto text-on-surface antialiased">
+    <>
+      <FallbackBanner />
+      <div className="flex min-h-screen overflow-hidden bg-surface font-roboto text-on-surface antialiased">
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -146,6 +149,7 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
-    </div>
+      </div>
+    </>
   );
 }

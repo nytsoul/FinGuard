@@ -6,18 +6,60 @@ export function getApiBaseUrl(): string {
   return (import.meta as any).env?.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 }
 
+// Track if we're in fallback mode (API unavailable)
+let apiFallbackMode = false;
+let lastApiError: string | null = null;
+
+export function isApiInFallback(): boolean {
+  return apiFallbackMode;
+}
+
+export function getLastApiError(): string | null {
+  return lastApiError;
+}
+
 export async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const baseUrl = getApiBaseUrl().replace(/\/$/, '');
   const url = `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
-  const response = await fetch(url, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
-  });
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`API ${response.status}: ${text || response.statusText}`);
+  
+  try {
+    const response = await fetch(url, {
+      ...init,
+      headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
+    });
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`API ${response.status}: ${text || response.statusText}`);
+    }
+    
+    // Success - clear fallback mode
+    apiFallbackMode = false;
+    lastApiError = null;
+    return response.json() as Promise<T>;
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.warn(`⚠️ API Request Failed [${path}]: ${errorMsg}. Using fallback data.`);
+    
+    apiFallbackMode = true;
+    lastApiError = errorMsg;
+    
+    // Re-throw to let individual handlers use fallback
+    throw error;
   }
-  return response.json() as Promise<T>;
+}
+
+export async function fetchJsonWithFallback<T>(
+  path: string,
+  fallbackFn: () => T,
+  init?: RequestInit
+): Promise<T> {
+  try {
+    return await fetchJson<T>(path, init);
+  } catch (error) {
+    console.log(`📊 Using simulated data for: ${path}`);
+    apiFallbackMode = true;
+    return fallbackFn();
+  }
 }
 
 // ─── Health ──────────────────────────────────────────────────────────────────
@@ -32,7 +74,11 @@ export type HealthResponse = {
 };
 
 export async function getHealth(): Promise<HealthResponse> {
-  return fetchJson<HealthResponse>('/api/health');
+  const { generateMockHealthResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/health',
+    () => generateMockHealthResponse()
+  );
 }
 
 // ─── Financial State ─────────────────────────────────────────────────────────
@@ -48,10 +94,19 @@ export type FinancialState = {
 };
 
 export async function getFinancialState(): Promise<{ status: string; data: FinancialState }> {
-  return fetchJson('/api/forecast/state');
+  const { generateMockForecastState } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/forecast/state',
+    () => generateMockForecastState()
+  );
 }
 
 // ─── Forecast ────────────────────────────────────────────────────────────────
+
+export type Forecast = {
+  data: Array<{ date: string; balance: number; p10: number; p50: number; p90: number }>;
+  summary: { min_cash: number; max_cash: number; avg_cash: number; volatility: number };
+};
 
 export type ForecastDay = { day: string; p90: number; p50: number; p10: number; median: number };
 
@@ -69,7 +124,11 @@ export type ForecastResponse = {
 };
 
 export async function getForecast(): Promise<ForecastResponse> {
-  return fetchJson<ForecastResponse>('/api/forecast/');
+  const { generateMockForecastResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/forecast/',
+    () => generateMockForecastResponse()
+  );
 }
 
 // ─── Transactions ────────────────────────────────────────────────────────────
@@ -78,11 +137,14 @@ export type Transaction = {
   id: string;
   vendor: string;
   amount: number;
-  direction: string;
-  narration: string;
+  direction?: string;
+  type?: string;
+  narration?: string;
+  note?: string;
   date: string;
   source: string;
   confidence: number;
+  matched?: boolean;
   reference?: string;
 };
 
@@ -101,23 +163,34 @@ export type ReconcileSummary = {
 };
 
 export async function getTransactions(): Promise<{ status: string; data: Transaction[] }> {
-  return fetchJson('/api/transactions/');
+  const { generateMockTransactionsResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/transactions/',
+    () => generateMockTransactionsResponse()
+  );
 }
 
 export async function getReconcileSummary(): Promise<ReconcileSummary> {
-  return fetchJson('/api/transactions/reconcile/summary');
+  const { generateMockReconcileResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/transactions/reconcile/summary',
+    () => generateMockReconcileResponse()
+  );
 }
 
 // ─── Invoices ────────────────────────────────────────────────────────────────
 
 export type Invoice = {
-  invoice_id: string;
+  id?: string;
+  invoice_id?: string;
   vendor: string;
   amount: number;
+  issue_date?: string;
   due_date: string;
+  paid_date?: string | null;
   status: string;
   match_confidence: number;
-  source: string;
+  source?: string;
 };
 
 export type InvoiceSummary = {
@@ -129,16 +202,42 @@ export type InvoiceSummary = {
 };
 
 export async function getInvoices(): Promise<{ status: string; data: Invoice[] }> {
-  return fetchJson('/api/invoices/');
+  const { generateMockInvoicesResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/invoices/',
+    () => generateMockInvoicesResponse()
+  );
 }
 
 export async function getInvoiceSummary(): Promise<InvoiceSummary> {
-  return fetchJson('/api/invoices/match/summary');
+  const { generateMockInvoiceMatchResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/invoices/match/summary',
+    () => generateMockInvoiceMatchResponse()
+  );
 }
 
 // ─── Decisions ───────────────────────────────────────────────────────────────
 
 export type ModelContribution = { feature: string; value: number; contribution: number };
+
+export type Decision = {
+  id: string;
+  vendor: string;
+  amount: number;
+  due_date: string;
+  priority_rank: number;
+  delay_probability: number;
+  relationship_damage_score: number;
+  financial_impact: number;
+  recommendation: string;
+  days_overdue?: number;
+  topsis_score?: number;
+  rank?: number;
+  explanation?: string[];
+  features?: Record<string, number>;
+  model_contributions?: ModelContribution[];
+};
 
 export type Obligation = {
   id: string;
@@ -177,11 +276,26 @@ export type ScenariosResponse = {
 };
 
 export async function getDecisionRanking(): Promise<DecisionRankingResponse> {
-  return fetchJson('/api/decisions/ranking');
+  const { generateMockDecisionsResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/decisions/ranking',
+    () => generateMockDecisionsResponse()
+  );
 }
 
 export async function getScenarios(): Promise<ScenariosResponse> {
-  return fetchJson('/api/decisions/scenarios');
+  const { generateMockDecisionsResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/decisions/scenarios',
+    () => {
+      const decisions = generateMockDecisionsResponse();
+      return {
+        status: 'limited',
+        data: [{ strategy: 'auto', cash_remaining_day_30: 2000000, total_penalty: 5000, probability_hitting_zero: 0.1, relationship_damage_score: 20, score: 85 }],
+        recommended: { strategy: 'auto', cash_remaining_day_30: 2000000, total_penalty: 5000, probability_hitting_zero: 0.1, relationship_damage_score: 20, score: 85 },
+      };
+    }
+  );
 }
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
@@ -192,6 +306,16 @@ export type ActionDraftRequest = {
   context: string;
   relationship_tenure_months?: number;
   tone?: string;
+};
+
+export type ActionDraft = {
+  id: string;
+  vendor: string;
+  amount: number;
+  tone: string;
+  subject: string;
+  body: string;
+  created_at: string;
 };
 
 export type ActionDraftResponse = {
@@ -206,12 +330,27 @@ export type ActionDraftResponse = {
 export type LLMStatus = { llm_available: boolean; model?: string };
 
 export async function generateActionDraft(req: ActionDraftRequest): Promise<ActionDraftResponse> {
-  return fetchJson('/api/actions/generate_draft', {
-    method: 'POST',
-    body: JSON.stringify(req),
-  });
+  const { generateMockActionResponse } = await import('./mockData');
+  return fetchJsonWithFallback(
+    '/api/actions/generate_draft',
+    () => {
+      const draft = generateMockActionResponse(req.vendor_name, req.amount, req.tone || 'formal');
+      return {
+        status: draft.status,
+        vendor: draft.data.vendor,
+        draft_subject: draft.data.subject,
+        draft_body: draft.data.body,
+        tone: draft.data.tone,
+        llm_available: false,
+      };
+    },
+    { method: 'POST', body: JSON.stringify(req) }
+  );
 }
 
 export async function getLLMStatus(): Promise<LLMStatus> {
-  return fetchJson('/api/actions/llm_status');
+  return fetchJsonWithFallback(
+    '/api/actions/llm_status',
+    () => ({ llm_available: false })
+  );
 }
