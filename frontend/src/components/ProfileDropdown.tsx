@@ -3,19 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfileDropdown() {
-<<<<<<< HEAD
-  const [isOpen, setIsOpen] = useState(false);
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  if (!user) {
-    return null; // Don't show profile dropdown if user isn't logged in
-  }
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/');
-=======
   const navigate = useNavigate();
   const { user, userProfile, signOut, upsertProfile } = useAuth();
 
@@ -72,7 +59,6 @@ export default function ProfileDropdown() {
         window.location.reload();
       }, 500);
     }
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
   };
 
   const menuItems = [
@@ -80,28 +66,8 @@ export default function ProfileDropdown() {
       label: 'View Profile',
       icon: 'person',
       onClick: () => {
-<<<<<<< HEAD
-        navigate('/dashboard/profile');
-        setIsOpen(false);
-      }
-    },
-    {
-      label: 'Preferences',
-      icon: 'tune',
-      onClick: () => {
-        navigate('/dashboard/preferences');
-        setIsOpen(false);
-      }
-    },
-    {
-      label: 'Help & Support',
-      icon: 'help',
-      onClick: () => {
-        navigate('/help');
-=======
         setIsEditMode(false);
         setShowProfileModal(true);
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         setIsOpen(false);
       }
     },
@@ -109,11 +75,7 @@ export default function ProfileDropdown() {
       label: 'Settings',
       icon: 'settings',
       onClick: () => {
-<<<<<<< HEAD
-        navigate('/dashboard/settings');
-=======
         navigate('/settings');
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         setIsOpen(false);
       }
     },
@@ -125,8 +87,6 @@ export default function ProfileDropdown() {
     }
   ];
 
-<<<<<<< HEAD
-=======
   const handleEditClick = () => {
     setEditData({
       full_name: userProfile?.full_name || '',
@@ -165,7 +125,6 @@ export default function ProfileDropdown() {
 
   if (!user) return null;
 
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
   return (
     <div className="relative">
       {/* Profile Button */}
@@ -175,16 +134,6 @@ export default function ProfileDropdown() {
       >
         <div className="hidden md:flex flex-col text-right">
           <p className="text-xs font-bold text-on-surface font-poppins">
-<<<<<<< HEAD
-            {user?.email}
-          </p>
-        </div>
-        <img
-          alt="User Profile"
-          className="w-10 h-10 rounded-full border-2 border-white shadow-sm hover:shadow-md transition-shadow"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhAj6S4kt83Py4JD1Yd7SIc1ZF3HdygHOPumB6IsNoSuo2-gyKCQ4vVp_0h2e0Kf7J0Vzv35Hy5Pw8FQ3qbzbZPbniMRhp_2loT7cthIb7w4ne4HySgG9OZedhuuuIL8OEu4bxTFcJ3ffi_Dl2ns1_x7EAFeM75vayJcktYwV-Y1H44t29Kmp7J0th-JuzTMD9RrCBB6qUrWm9zsXQcYJfjjZrpZubfdjqLPJBzBQ_Dyh4_DKLl73l99-5zPHITp_uH066tl6KZTXL"
-        />
-=======
             {displayName}
           </p>
           <p className="text-[10px] text-slate-500 font-inter uppercase tracking-wider">
@@ -194,7 +143,6 @@ export default function ProfileDropdown() {
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#0055e0] grid place-items-center text-white font-bold shadow-sm">
           {displayName.charAt(0).toUpperCase()}
         </div>
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
       </button>
 
       {/* Profile Dropdown */}
@@ -203,40 +151,6 @@ export default function ProfileDropdown() {
           {/* User Info Header */}
           <div className="bg-gradient-to-r from-[#f7f9fc] to-[#f2f4f7] p-6 border-b border-slate-100">
             <div className="flex items-center gap-4">
-<<<<<<< HEAD
-              <img
-                alt="User Profile"
-                className="w-12 h-12 rounded-xl border-2 border-white shadow-sm"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhAj6S4kt83Py4JD1Yd7SIc1ZF3HdygHOPumB6IsNoSuo2-gyKCQ4vVp_0h2e0Kf7J0Vzv35Hy5Pw8FQ3qbzbZPbniMRhp_2loT7cthIb7w4ne4HySgG9OZedhuuuIL8OEu4bxTFcJ3ffi_Dl2ns1_x7EAFeM75vayJcktYwV-Y1H44t29Kmp7J0th-JuzTMD9RrCBB6qUrWm9zsXQcYJfjjZrpZubfdjqLPJBzBQ_Dyh4_DKLl73l99-5zPHITp_uH066tl6KZTXL"
-              />
-              <div className="flex-1">
-                <h3 className="font-semibold text-on-surface font-poppins">
-                  {user?.email}
-                </h3>
-              </div>
-            </div>
-          </div>
-          {/* Menu Items */}
-          <div className="p-2">
-            {menuItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={item.onClick}
-                className={
-                  'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ' +
-                  (item.isLogout
-                    ? 'text-red-600 hover:bg-red-50'
-                    : 'text-slate-600 hover:bg-slate-50')
-                }
-              >
-                <span className="material-symbols-outlined text-lg">
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
-=======
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-[#0055e0] grid place-items-center text-white font-bold text-lg shadow-sm">
                 {displayName.charAt(0).toUpperCase()}
               </div>
@@ -467,7 +381,6 @@ export default function ProfileDropdown() {
               </div>
             </div>
           </div>
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         </div>
       )}
     </div>

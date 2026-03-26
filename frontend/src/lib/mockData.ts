@@ -5,7 +5,7 @@
  * All data is randomized within realistic business parameters.
  */
 
-import { FinancialState, Forecast, Transaction, Invoice, Decision, ActionDraft } from './api';
+import type { FinancialState, Forecast, Transaction, Invoice, Decision, ActionDraft } from './api';
 
 // ─── Realistic Financial Data Generators ─────────────────────────────────────
 

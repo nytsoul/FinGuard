@@ -1,180 +1,11 @@
-<<<<<<< HEAD
-const DEFAULT_API_BASE_URL = 'http://localhost:8000';
-=======
 // ─── Base ────────────────────────────────────────────────────────────────────
 
 const DEFAULT_API_BASE_URL = 'http://localhost:8001';
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
 export function getApiBaseUrl(): string {
   return (import.meta as any).env?.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 }
 
-<<<<<<< HEAD
-export async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const baseUrl = getApiBaseUrl().replace(/\/$/, '');
-  const url = `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
-
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers || {})
-    }
-  });
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`API ${response.status}: ${text || response.statusText}`);
-  }
-
-  return response.json() as Promise<T>;
-}
-
-export type Transaction = {
-  id?: string;
-  vendor: string;
-  amount: number;
-  date: string; // YYYY-MM-DD
-  category?: string;
-  source_account?: string;
-  status?: string;
-  match_confidence?: number;
-};
-
-export async function getTransactions(): Promise<Transaction[]> {
-  return fetchJson<Transaction[]>('/api/transactions/');
-}
-
-export type ForecastApiResponse = {
-  status: string;
-  data: Array<{
-    day: string;
-    p90: number;
-    p50: number;
-    p10: number;
-    median: number;
-  }>;
-  metrics: {
-    shortfall_probability: number;
-    median_days_to_zero: number;
-    worst_case_zero: number;
-    best_case_zero: number;
-  };
-};
-
-export async function getForecast(): Promise<ForecastApiResponse> {
-  return fetchJson<ForecastApiResponse>('/api/forecast/');
-}
-
-// Reports API
-export async function generateReport(reportType: string, dateRange: string = '30d') {
-  return fetchJson('/api/reports/generate', {
-    method: 'POST',
-    body: JSON.stringify({ report_type: reportType, date_range: dateRange, include_recommendations: true })
-  });
-}
-
-export async function exportReportPdf() {
-  return fetchJson('/api/reports/export/pdf');
-}
-
-// Imports API
-export async function importCsv(file: File) {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  const baseUrl = getApiBaseUrl().replace(/\/$/, '');
-  const response = await fetch(`${baseUrl}/api/imports/csv`, {
-    method: 'POST',
-    body: formData
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Import failed: ${response.statusText}`);
-  }
-  
-  return response.json();
-}
-
-// Strategies API
-export async function getMitigationStrategy(scenario: string = 'current') {
-  return fetchJson(`/api/strategies/mitigation?scenario=${scenario}`);
-}
-
-// Payments API
-export async function executePayment(vendor: string, amount: number, invoiceId: string, paymentMethod: string = 'bank_transfer') {
-  return fetchJson('/api/payments/execute', {
-    method: 'POST',
-    body: JSON.stringify({ vendor, amount, invoice_id: invoiceId, payment_method: paymentMethod })
-  });
-}
-
-export async function getPaymentHistory(limit: number = 20, offset: number = 0) {
-  return fetchJson(`/api/payments/history?limit=${limit}&offset=${offset}`);
-}
-
-// Actions API
-export async function sendEmail(recipient: string, subject: string, body: string) {
-  return fetchJson('/api/actions/send_email', {
-    method: 'POST',
-    body: JSON.stringify({ recipient, subject, body })
-  });
-}
-
-export async function sendWhatsApp(phoneNumber: string, message: string) {
-  return fetchJson('/api/actions/send_whatsapp', {
-    method: 'POST',
-    body: JSON.stringify({ phone_number: phoneNumber, message })
-  });
-}
-
-export async function generateAiTransactionDraft(transactionType: string, amount: number, category: string, context: string) {
-  return fetchJson('/api/actions/ai_draft_transaction', {
-    method: 'POST',
-    body: JSON.stringify({ transaction_type: transactionType, amount, category, context })
-  });
-}
-
-export type BackendPreferences = {
-  user_id: string;
-  notifications: {
-    email_notifications: boolean;
-    sms_notifications: boolean;
-    push_notifications: boolean;
-    email_frequency: 'immediate' | 'daily' | 'weekly';
-    invoice_alerts: boolean;
-    payment_reminders: boolean;
-    cash_flow_alerts: boolean;
-    vendor_alerts: boolean;
-  };
-  display: {
-    theme: 'light' | 'dark' | 'auto';
-    language: string;
-    date_format: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
-    currency_format: string;
-    items_per_page: number;
-  };
-  financial: {
-    default_payment_term: number;
-    budget_warning_threshold: number;
-    auto_payment_enabled: boolean;
-    auto_payment_threshold: number;
-    reconciliation_method: 'manual' | 'auto' | 'semi-auto';
-    tax_calculation: 'GST' | 'VAT' | 'NONE';
-  };
-};
-
-export async function getUserPreferences(userId: string): Promise<BackendPreferences> {
-  return fetchJson<BackendPreferences>(`/api/preferences/user/${userId}`);
-}
-
-export async function saveUserPreferences(userId: string, payload: BackendPreferences): Promise<BackendPreferences> {
-  return fetchJson<BackendPreferences>(`/api/preferences/user/${userId}`, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
-=======
 // Track if we're in fallback mode (API unavailable)
 let apiFallbackMode = false;
 let lastApiError: string | null = null;
@@ -296,7 +127,27 @@ export async function getForecast(): Promise<ForecastResponse> {
   const { generateMockForecastResponse } = await import('./mockData');
   return fetchJsonWithFallback(
     '/api/forecast/',
-    () => generateMockForecastResponse()
+    () => {
+      const mock = generateMockForecastResponse();
+      const data: ForecastDay[] = mock.data.data.map((d) => ({
+        day: d.date,
+        p90: d.p90,
+        p50: d.p50,
+        p10: d.p10,
+        median: d.p50,
+      }));
+
+      return {
+        status: mock.status,
+        data,
+        metrics: {
+          shortfall_probability: 0.15,
+          median_days_to_zero: 999,
+          worst_case_zero: 45,
+          best_case_zero: 999,
+        },
+      };
+    }
   );
 }
 
@@ -343,7 +194,15 @@ export async function getReconcileSummary(): Promise<ReconcileSummary> {
   const { generateMockReconcileResponse } = await import('./mockData');
   return fetchJsonWithFallback(
     '/api/transactions/reconcile/summary',
-    () => generateMockReconcileResponse()
+    () => {
+      const mock = generateMockReconcileResponse();
+      return {
+        status: mock.status,
+        ingestion_count: mock.data.summary.total_transactions,
+        deduplicated_count: mock.data.summary.matched + mock.data.summary.unmatched,
+        duplicate_clusters: [],
+      };
+    }
   );
 }
 
@@ -382,7 +241,20 @@ export async function getInvoiceSummary(): Promise<InvoiceSummary> {
   const { generateMockInvoiceMatchResponse } = await import('./mockData');
   return fetchJsonWithFallback(
     '/api/invoices/match/summary',
-    () => generateMockInvoiceMatchResponse()
+    () => {
+      const mock = generateMockInvoiceMatchResponse();
+      return {
+        status: mock.status,
+        total_invoices: mock.data.summary.total_invoices,
+        matched: mock.data.summary.matched,
+        unmatched: mock.data.summary.unmatched,
+        breakdown: {
+          paid: mock.data.summary.matched,
+          unpaid: mock.data.summary.unmatched,
+          partial: 0,
+        },
+      };
+    }
   );
 }
 
@@ -448,7 +320,32 @@ export async function getDecisionRanking(): Promise<DecisionRankingResponse> {
   const { generateMockDecisionsResponse } = await import('./mockData');
   return fetchJsonWithFallback(
     '/api/decisions/ranking',
-    () => generateMockDecisionsResponse()
+    () => {
+      const mock = generateMockDecisionsResponse();
+      const obligations: Obligation[] = mock.data.ranking.map((d) => ({
+        id: d.id,
+        vendor: d.vendor,
+        amount: d.amount,
+        due_date: d.due_date,
+        days_overdue: d.days_overdue ?? 0,
+        delay_probability: d.delay_probability,
+        topsis_score: d.topsis_score ?? 0,
+        rank: d.rank ?? d.priority_rank,
+        recommendation: d.recommendation,
+        explanation: d.explanation ?? [],
+        features: d.features ?? {},
+        model_contributions: d.model_contributions ?? [],
+      }));
+
+      return {
+        status: mock.status,
+        weights: {
+          criteria: ['urgency', 'amount', 'relationship'],
+          weights: [0.5, 0.3, 0.2],
+        },
+        data: obligations,
+      };
+    }
   );
 }
 
@@ -457,7 +354,7 @@ export async function getScenarios(): Promise<ScenariosResponse> {
   return fetchJsonWithFallback(
     '/api/decisions/scenarios',
     () => {
-      const decisions = generateMockDecisionsResponse();
+      generateMockDecisionsResponse();
       return {
         status: 'limited',
         data: [{ strategy: 'auto', cash_remaining_day_30: 2000000, total_penalty: 5000, probability_hitting_zero: 0.1, relationship_damage_score: 20, score: 85 }],
@@ -522,5 +419,4 @@ export async function getLLMStatus(): Promise<LLMStatus> {
     '/api/actions/llm_status',
     () => ({ llm_available: false })
   );
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 }

@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-<<<<<<< HEAD
   build: {
     // Code splitting configuration
     rollupOptions: {
@@ -72,6 +71,4 @@ export default defineConfig({
     middlewareMode: false,
     hmr: true,
   },
-=======
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 })

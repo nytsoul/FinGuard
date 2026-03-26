@@ -1,10 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD
-from routers import transactions, invoices, forecast, decisions, actions, payments, reports, imports, strategies, preferences, profile
-
-app = FastAPI(title="CashMind Open API", version="1.0.0")
-=======
 from routers import transactions, invoices, forecast, decisions, actions, payments, ingest
 import time
 
@@ -19,7 +14,6 @@ app = FastAPI(
         "AHP+TOPSIS obligation ranking → Monte Carlo 30-day forecast → LLM action drafts."
     ),
 )
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,17 +29,6 @@ app.include_router(forecast.router)
 app.include_router(decisions.router)
 app.include_router(actions.router)
 app.include_router(payments.router)
-<<<<<<< HEAD
-app.include_router(reports.router)
-app.include_router(imports.router)
-app.include_router(strategies.router)
-app.include_router(preferences.router)
-app.include_router(profile.router)
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to CashMind API"}
-=======
 app.include_router(ingest.router)
 
 
@@ -97,4 +80,3 @@ def health_check():
             ]
         },
     }
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23

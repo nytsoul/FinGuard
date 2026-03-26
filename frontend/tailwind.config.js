@@ -7,11 +7,6 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
-<<<<<<< HEAD
-      colors: {
-        "secondary-fixed-dim": "#b4c5ff",
-        "primary": "#004ac6",
-=======
       animation: {
         fadeIn: 'fadeIn 0.6s ease-in',
         slideInLeft: 'slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -88,24 +83,15 @@ export default {
         "secondary-fixed-dim": "#b4c5ff",
         "primary": "#004ac6",
         "primary-light": "#0055e0",
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         "inverse-surface": "#2d3133",
         "on-tertiary": "#ffffff",
         "on-secondary-fixed": "#00174b",
         "on-error": "#ffffff",
-<<<<<<< HEAD
-        "on-primary-fixed-variant": "#003ea8",
-        "outline-variant": "#c3c6d7",
-        "on-surface": "#191c1e",
-        "surface-tint": "#0053db",
-        "on-primary-container": "#eeefff",
-=======
         "on-primary-fixed-variant": "#6d28d9",
         "outline-variant": "#c3c6d7",
         "on-surface": "#191c1e",
         "surface-tint": "#8b5cf6",
         "on-primary-container": "#f3e8ff",
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         "surface-container-lowest": "#ffffff",
         "surface-container-high": "#e6e8eb",
         "on-primary": "#ffffff",
@@ -118,17 +104,10 @@ export default {
         "tertiary": "#943700",
         "surface": "#f7f9fc",
         "surface-container-low": "#f2f4f7",
-<<<<<<< HEAD
-        "inverse-primary": "#b4c5ff",
-        "primary-container": "#2563eb",
-        "primary-fixed": "#dbe1ff",
-        "on-primary-fixed": "#00174b",
-=======
         "inverse-primary": "#c4b5fd",
         "primary-container": "#8b5cf6",
         "primary-fixed": "#ede9fe",
         "on-primary-fixed": "#3f0f66",
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         "on-surface-variant": "#434655",
         "on-secondary": "#ffffff",
         "inverse-on-surface": "#eff1f4",
@@ -141,11 +120,7 @@ export default {
         "tertiary-fixed": "#ffdbcd",
         "secondary-container": "#acbfff",
         "on-error-container": "#93000a",
-<<<<<<< HEAD
-        "primary-fixed-dim": "#b4c5ff",
-=======
         "primary-fixed-dim": "#ddd6fe",
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         "tertiary-fixed-dim": "#ffb596",
         "surface-variant": "#e0e3e6",
         "outline": "#737686",

@@ -12,11 +12,7 @@ import {
   ReferenceLine
 } from 'recharts';
 
-<<<<<<< HEAD
-import { getForecast, type ForecastApiResponse } from '../lib/api';
-=======
 import { getForecast, type ForecastResponse } from '../lib/api';
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 import { downloadTextFile, exportElementToPdf, toCsv } from '../lib/export';
 
 interface ForecastChartProps {
@@ -27,8 +23,6 @@ interface ForecastChartProps {
   pollIntervalMs?: number;
 }
 
-<<<<<<< HEAD
-=======
 type ForecastChartPoint = {
   name: string;
   expected: number;
@@ -38,7 +32,6 @@ type ForecastChartPoint = {
   p50?: number;
 };
 
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 const MONTE_CARLO_DATA = [
   { name: 'Sept 01', expected: 1200000, p10: 1200000, p90: 1200000 },
   { name: 'Sept 15', expected: 1300000, p10: 1000000, p90: 1600000 },
@@ -71,11 +64,7 @@ export default function ForecastChart({
   const [isLive, setIsLive] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-<<<<<<< HEAD
-  const [api, setApi] = useState<ForecastApiResponse | null>(null);
-=======
   const [api, setApi] = useState<ForecastResponse | null>(null);
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
   const refresh = async () => {
     if (!useApi) return;
@@ -107,11 +96,7 @@ export default function ForecastChart({
   }, [useApi, isLive, pollIntervalMs]);
 
   const chartData = useMemo(() => {
-<<<<<<< HEAD
-    const fromApi = api?.data?.map((d) => ({
-=======
     const fromApi = api?.data?.map((d): ForecastChartPoint => ({
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
       name: d.day,
       expected: d.p50 ?? d.median,
       p10: d.p10,
@@ -120,20 +105,12 @@ export default function ForecastChart({
       p50: d.p50
     }));
 
-<<<<<<< HEAD
-    const raw = fromApi && fromApi.length ? fromApi : data;
-=======
     const raw: ForecastChartPoint[] = (fromApi && fromApi.length ? fromApi : data) as ForecastChartPoint[];
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
     const days = Math.max(1, Math.min(Number(timeRange || '90'), raw.length));
     const sliced = raw.slice(0, days);
 
-<<<<<<< HEAD
-    const getIndex = (d: any) => {
-=======
     const getIndex = (d: ForecastChartPoint) => {
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
       const s = String(d.name ?? '');
       const match = s.match(/(\d+)/);
       return match ? Number(match[1]) : null;
@@ -142,11 +119,7 @@ export default function ForecastChart({
     const end = endDay ? Number(endDay) : null;
     if (!start && !end) return sliced;
 
-<<<<<<< HEAD
-    return sliced.filter((d) => {
-=======
     return sliced.filter((d: ForecastChartPoint) => {
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
       const idx = getIndex(d);
       if (!idx) return true;
       if (start && idx < start) return false;
@@ -306,11 +279,7 @@ export default function ForecastChart({
       </div>
 
       {/* Main Chart */}
-<<<<<<< HEAD
-      <div ref={chartRef} className="neumorphic-card rounded-2xl p-6 bg-gradient-to-br from-white to-slate-50">
-=======
       <div ref={chartRef} className="neumorphic-card rounded-2xl p-6 bg-gradient-to-br from-white via-purple-50/20 to-slate-50">
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
         <ResponsiveContainer width="100%" height={450}>
           <ComposedChart
             data={chartData}
@@ -322,23 +291,6 @@ export default function ForecastChart({
                 <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="fillExpected" x1="0" y1="0" x2="0" y2="1">
-<<<<<<< HEAD
-                <stop offset="5%" stopColor="#004ac6" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#004ac6" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.3} />
-            <XAxis
-              dataKey="name"
-              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
-              axisLine={{ stroke: '#e2e8f0' }}
-            />
-            <YAxis
-              tickFormatter={formatCurrency}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-              axisLine={{ stroke: '#e2e8f0' }}
-=======
                 <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.2} />
                 <stop offset="95%" stopColor="#7C3AED" stopOpacity={0} />
               </linearGradient>
@@ -354,7 +306,6 @@ export default function ForecastChart({
               tickFormatter={formatCurrency}
               tick={{ fill: '#71717a', fontSize: 12 }}
               axisLine={{ stroke: '#d4d4d8', strokeWidth: 1 }}
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
             />
             <Tooltip content={<CustomTooltip />} />
 
@@ -382,17 +333,10 @@ export default function ForecastChart({
             <Line
               type="monotone"
               dataKey="expected"
-<<<<<<< HEAD
-              stroke="#004ac6"
-              strokeWidth={4}
-              dot={{
-                fill: '#004ac6',
-=======
               stroke="#7C3AED"
               strokeWidth={4}
               dot={{
                 fill: '#7C3AED',
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
                 r: 6,
                 strokeWidth: 2,
                 stroke: '#ffffff'
@@ -409,11 +353,7 @@ export default function ForecastChart({
             <Line
               type="monotone"
               dataKey="p10"
-<<<<<<< HEAD
-              stroke="#dc2626"
-=======
               stroke="#ef4444"
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
               strokeWidth={2}
               strokeDasharray="5 5"
               dot={false}

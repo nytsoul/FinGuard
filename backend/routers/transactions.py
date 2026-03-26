@@ -1,28 +1,11 @@
 from fastapi import APIRouter, HTTPException
-<<<<<<< HEAD
-from database import get_supabase
-=======
 
 from finance_engine import build_full_pipeline
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
 
 router = APIRouter(prefix="/api/transactions", tags=["Transactions"])
 
 @router.get("/")
 def get_transactions():
-<<<<<<< HEAD
-    supabase = get_supabase()
-    response = supabase.table("transactions").select("*").execute()
-    return response.data
-
-@router.get("/{transaction_id}")
-def get_transaction(transaction_id: str):
-    supabase = get_supabase()
-    response = supabase.table("transactions").select("*").eq("id", transaction_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    return response.data[0]
-=======
     pipeline = build_full_pipeline()
     return {
         "status": "success",
@@ -57,4 +40,3 @@ def get_reconciliation_matches():
         "status": "success",
         "data": pipeline["matching"],
     }
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23

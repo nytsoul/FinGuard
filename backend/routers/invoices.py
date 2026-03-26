@@ -1,23 +1,4 @@
 from fastapi import APIRouter, HTTPException
-<<<<<<< HEAD
-from database import get_supabase
-
-router = APIRouter(prefix="/api/invoices", tags=["Invoices"])
-
-@router.get("/")
-def get_invoices():
-    supabase = get_supabase()
-    response = supabase.table("invoices").select("*").execute()
-    return response.data
-
-@router.get("/{invoice_id}")
-def get_invoice(invoice_id: str):
-    supabase = get_supabase()
-    response = supabase.table("invoices").select("*").eq("id", invoice_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Invoice not found")
-    return response.data[0]
-=======
 
 from finance_engine import build_full_pipeline
 
@@ -64,4 +45,3 @@ def get_invoice_match_summary():
         "unmatched": len(pipeline["matching"]["unmatched_invoice_ids"]),
         "breakdown": summary,
     }
->>>>>>> 04a2f71d565a79346feae7b74ca2db6b30af6f23
