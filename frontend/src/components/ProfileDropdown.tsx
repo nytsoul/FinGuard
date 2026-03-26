@@ -1,27 +1,44 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProfileDropdown() {
+  const navigate = useNavigate();
+  const { user, userProfile, signOut, upsertProfile } = useAuth();
+
   const [isOpen, setIsOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [showPreferences, setShowPreferences] = useState(false);
-  const [showHelpSupport, setShowHelpSupport] = useState(false);
-  const navigate = useNavigate();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editLoading, setSaveLoading] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
-  const user = {
-    name: 'Alex Stratton',
-    email: 'alex@techflow.com',
-    phone: '+1 (555) 123-4567',
-    role: 'CFO',
-    company: 'TechFlow Inc.',
-    companyReg: 'REG-2024-45892',
-    bankAccount: '****4521',
-    bankName: 'Global Finance Bank',
-    pan: 'AAAPA1234A',
-    ifsc: 'GFBK0001234',
-    address: '123 Business Park, Tech Valley, CA 94025',
-    avatar:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBhAj6S4kt83Py4JD1Yd7SIc1ZF3HdygHOPumB6IsNoSuo2-gyKCQ4vVp_0h2e0Kf7J0Vzv35Hy5Pw8FQ3qbzbZPbniMRhp_2loT7cthIb7w4ne4HySgG9OZedhuuuIL8OEu4bxTFcJ3ffi_Dl2ns1_x7EAFeM75vayJcktYwV-Y1H44t29Kmp7J0th-JuzTMD9RrCBB6qUrWm9zsXQcYJfjjZrpZubfdjqLPJBzBQ_Dyh4_DKLl73l99-5zPHITp_uH066tl6KZTXL'
+  const [editData, setEditData] = useState({
+    full_name: userProfile?.full_name || '',
+    company_name: userProfile?.company_name || '',
+  });
+
+  const displayName = userProfile?.full_name || user?.email?.split('@')[0] || 'User';
+  const displayCompany = userProfile?.company_name || 'No company';
+
+  const handleLogout = async () => {
+    try {
+      setLogoutLoading(true);
+      setIsOpen(false);
+      
+      const { error } = await signOut();
+      
+      if (error) {
+        console.error('Logout error:', error);
+        return;
+      }
+      
+      // Navigate after successful logout
+      navigate('/login', { replace: true });
+    } catch (err) {
+      console.error('Unexpected logout error:', err);
+      setLogoutLoading(false);
+    }
   };
 
   const menuItems = [
@@ -29,23 +46,8 @@ export default function ProfileDropdown() {
       label: 'View Profile',
       icon: 'person',
       onClick: () => {
+        setIsEditMode(false);
         setShowProfileModal(true);
-        setIsOpen(false);
-      }
-    },
-    {
-      label: 'Preferences',
-      icon: 'tune',
-      onClick: () => {
-        setShowPreferences(true);
-        setIsOpen(false);
-      }
-    },
-    {
-      label: 'Help & Support',
-      icon: 'help',
-      onClick: () => {
-        setShowHelpSupport(true);
         setIsOpen(false);
       }
     },
@@ -60,10 +62,48 @@ export default function ProfileDropdown() {
     {
       label: 'Logout',
       icon: 'logout',
-      onClick: () => alert('Logout functionality coming soon!'),
+      onClick: handleLogout,
       isLogout: true
     }
   ];
+
+  const handleEditClick = () => {
+    setEditData({
+      full_name: userProfile?.full_name || '',
+      company_name: userProfile?.company_name || '',
+    });
+    setIsEditMode(true);
+  };
+
+  const handleSaveProfile = async () => {
+    setSaveLoading(true);
+    setEditError('');
+
+    const { error } = await upsertProfile({
+      full_name: editData.full_name || null,
+      company_name: editData.company_name || null,
+    });
+
+    if (error) {
+      setEditError(error.message);
+      setSaveLoading(false);
+      return;
+    }
+
+    setIsEditMode(false);
+    setSaveLoading(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditMode(false);
+    setEditError('');
+    setEditData({
+      full_name: userProfile?.full_name || '',
+      company_name: userProfile?.company_name || '',
+    });
+  };
+
+  if (!user) return null;
 
   return (
     <div className="relative">
@@ -74,17 +114,15 @@ export default function ProfileDropdown() {
       >
         <div className="hidden md:flex flex-col text-right">
           <p className="text-xs font-bold text-on-surface font-poppins">
-            {user.name}
+            {displayName}
           </p>
           <p className="text-[10px] text-slate-500 font-inter uppercase tracking-wider">
-            {user.role} • {user.company}
+            {displayCompany}
           </p>
         </div>
-        <img
-          alt="User Profile"
-          className="w-10 h-10 rounded-full border-2 border-white shadow-sm hover:shadow-md transition-shadow"
-          src={user.avatar}
-        />
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#0055e0] grid place-items-center text-white font-bold shadow-sm">
+          {displayName.charAt(0).toUpperCase()}
+        </div>
       </button>
 
       {/* Profile Dropdown */}
@@ -93,20 +131,18 @@ export default function ProfileDropdown() {
           {/* User Info Header */}
           <div className="bg-gradient-to-r from-[#f7f9fc] to-[#f2f4f7] p-6 border-b border-slate-100">
             <div className="flex items-center gap-4">
-              <img
-                alt="User Profile"
-                className="w-12 h-12 rounded-xl border-2 border-white shadow-sm"
-                src={user.avatar}
-              />
-              <div>
-                <p className="font-bold text-lg font-poppins text-on-surface">
-                  {user.name}
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-[#0055e0] grid place-items-center text-white font-bold text-lg shadow-sm">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-lg font-poppins text-on-surface truncate">
+                  {displayName}
                 </p>
-                <p className="text-xs text-slate-600 font-inter">
+                <p className="text-xs text-slate-600 font-inter truncate">
                   {user.email}
                 </p>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">
-                  {user.role}
+                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1 truncate">
+                  {displayCompany}
                 </p>
               </div>
             </div>
@@ -128,16 +164,23 @@ export default function ProfileDropdown() {
               <button
                 key={index}
                 onClick={item.onClick}
-                className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${
+                disabled={item.isLogout && logoutLoading}
+                className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   item.isLogout
                     ? 'text-red-600 hover:bg-red-50'
                     : 'text-slate-700 hover:bg-slate-50'
                 }`}
               >
-                <span className="material-symbols-outlined text-lg">
-                  {item.icon}
+                {item.isLogout && logoutLoading ? (
+                  <span className="inline-block w-4 h-4 border-2 border-red-200 border-t-red-600 rounded-full animate-spin"></span>
+                ) : (
+                  <span className="material-symbols-outlined text-lg">
+                    {item.icon}
+                  </span>
+                )}
+                <span className="flex-1 text-left font-inter">
+                  {item.isLogout && logoutLoading ? 'Signing out...' : item.label}
                 </span>
-                <span className="flex-1 text-left font-inter">{item.label}</span>
                 {!item.isLogout && (
                   <span className="material-symbols-outlined text-slate-400 text-sm">
                     chevron_right
@@ -174,7 +217,9 @@ export default function ProfileDropdown() {
           <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="sticky top-0 bg-gradient-to-r from-[#f7f9fc] to-[#f2f4f7] p-6 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-2xl font-bold font-poppins text-on-surface">Profile Details</h2>
+              <h2 className="text-2xl font-bold font-poppins text-on-surface">
+                {isEditMode ? 'Edit Profile' : 'Profile Details'}
+              </h2>
               <button
                 onClick={() => setShowProfileModal(false)}
                 className="p-2 hover:bg-white/50 rounded-lg transition-colors"
@@ -185,16 +230,20 @@ export default function ProfileDropdown() {
 
             {/* Profile Content */}
             <div className="p-6 space-y-6">
+              {editError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  {editError}
+                </div>
+              )}
+
               {/* Avatar & Name */}
               <div className="flex items-center gap-6 pb-6 border-b border-slate-100">
-                <img
-                  alt="User Profile"
-                  className="w-20 h-20 rounded-2xl border-2 border-white shadow-md"
-                  src={user.avatar}
-                />
-                <div>
-                  <h3 className="text-2xl font-bold font-poppins text-on-surface">{user.name}</h3>
-                  <p className="text-sm text-slate-600 font-inter">{user.role}</p>
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-[#0055e0] grid place-items-center text-white font-bold text-3xl shadow-md flex-shrink-0">
+                  {displayName.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold font-poppins text-on-surface">{displayName}</h3>
+                  <p className="text-sm text-slate-600 font-inter">{displayCompany}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
                     <span className="text-xs font-semibold text-emerald-600">Active</span>
@@ -206,27 +255,47 @@ export default function ProfileDropdown() {
               <div>
                 <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Personal Information</h4>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-slate-500">mail</span>
-                      <span className="text-xs font-semibold text-slate-600 uppercase">Email</span>
-                    </div>
-                    <span className="text-sm font-medium text-on-surface">{user.email}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-slate-500">phone</span>
-                      <span className="text-xs font-semibold text-slate-600 uppercase">Phone</span>
-                    </div>
-                    <span className="text-sm font-medium text-on-surface">{user.phone}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-slate-500">location_on</span>
-                      <span className="text-xs font-semibold text-slate-600 uppercase">Address</span>
-                    </div>
-                    <span className="text-sm font-medium text-on-surface text-right">{user.address}</span>
-                  </div>
+                  {isEditMode ? (
+                    <>
+                      <div>
+                        <label className="text-xs font-semibold text-slate-600 uppercase block mb-1">Full Name</label>
+                        <input
+                          type="text"
+                          value={editData.full_name}
+                          onChange={(e) => setEditData(prev => ({ ...prev, full_name: e.target.value }))}
+                          placeholder="Your full name"
+                          className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-slate-600 uppercase block mb-1">Company Name</label>
+                        <input
+                          type="text"
+                          value={editData.company_name}
+                          onChange={(e) => setEditData(prev => ({ ...prev, company_name: e.target.value }))}
+                          placeholder="Your company name"
+                          className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <span className="material-symbols-outlined text-slate-500">person</span>
+                          <span className="text-xs font-semibold text-slate-600 uppercase">Full Name</span>
+                        </div>
+                        <span className="text-sm font-medium text-on-surface">{userProfile?.full_name || '—'}</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <span className="material-symbols-outlined text-slate-500">mail</span>
+                          <span className="text-xs font-semibold text-slate-600 uppercase">Email</span>
+                        </div>
+                        <span className="text-sm font-medium text-on-surface truncate">{user.email}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -239,272 +308,56 @@ export default function ProfileDropdown() {
                       <span className="material-symbols-outlined text-slate-500">business</span>
                       <span className="text-xs font-semibold text-slate-600 uppercase">Company</span>
                     </div>
-                    <span className="text-sm font-medium text-on-surface">{user.company}</span>
+                    <span className="text-sm font-medium text-on-surface">{userProfile?.company_name || '—'}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-slate-500">article</span>
-                      <span className="text-xs font-semibold text-slate-600 uppercase">Registration</span>
+                      <span className="material-symbols-outlined text-slate-500">calendar_today</span>
+                      <span className="text-xs font-semibold text-slate-600 uppercase">Member Since</span>
                     </div>
-                    <span className="text-sm font-medium text-on-surface">{user.companyReg}</span>
+                    <span className="text-sm font-medium text-on-surface">
+                      {userProfile?.created_at ? new Date(userProfile.created_at).toLocaleDateString() : '—'}
+                    </span>
                   </div>
-                </div>
-              </div>
-
-              {/* Bank Details */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Bank Details</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-blue-600">account_balance</span>
-                      <span className="text-xs font-semibold text-blue-700 uppercase">Bank</span>
-                    </div>
-                    <span className="text-sm font-medium text-blue-900">{user.bankName}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-blue-600">credit_card</span>
-                      <span className="text-xs font-semibold text-blue-700 uppercase">Account</span>
-                    </div>
-                    <span className="text-sm font-medium text-blue-900 font-mono">{user.bankAccount}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-blue-600">confirmation_number</span>
-                      <span className="text-xs font-semibold text-blue-700 uppercase">IFSC</span>
-                    </div>
-                    <span className="text-sm font-medium text-blue-900">{user.ifsc}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tax Information */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Tax Information</h4>
-                <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-200">
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-amber-600">badge</span>
-                    <span className="text-xs font-semibold text-amber-700 uppercase">PAN</span>
-                  </div>
-                  <span className="text-sm font-medium text-amber-900 font-mono">{user.pan}</span>
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4 border-t border-slate-100">
-                <button className="flex-1 py-2 px-4 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-all">
-                  Edit Profile
-                </button>
-                <button
-                  onClick={() => setShowProfileModal(false)}
-                  className="flex-1 py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-colors"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Preferences Modal */}
-      {showPreferences && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div 
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setShowPreferences(false)}
-          ></div>
-          <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-[#f7f9fc] to-[#f2f4f7] p-6 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-2xl font-bold font-poppins text-on-surface">Preferences</h2>
-              <button
-                onClick={() => setShowPreferences(false)}
-                className="p-2 hover:bg-white/50 rounded-lg transition-colors"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* Notification Preferences */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Notification Preferences</h4>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors">
-                    <input type="checkbox" defaultChecked className="w-5 h-5" />
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-slate-700">Email Notifications</p>
-                      <p className="text-xs text-slate-500">Receive alerts via email</p>
-                    </div>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors">
-                    <input type="checkbox" defaultChecked className="w-5 h-5" />
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-slate-700">Push Notifications</p>
-                      <p className="text-xs text-slate-500">Desktop & mobile alerts</p>
-                    </div>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors">
-                    <input type="checkbox" className="w-5 h-5" />
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-slate-700">SMS Alerts</p>
-                      <p className="text-xs text-slate-500">Critical alerts only</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              {/* Display Preferences */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Display Settings</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <span className="text-sm font-semibold text-slate-700">Dark Mode</span>
-                    <input type="checkbox" className="w-5 h-5" />
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <span className="text-sm font-semibold text-slate-700">Compact View</span>
-                    <input type="checkbox" className="w-5 h-5" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Language & Region */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Language & Region</h4>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs font-semibold text-slate-600 uppercase">Language</label>
-                    <select className="w-full mt-2 p-2 border border-slate-200 rounded-lg font-roboto focus:ring-2 focus:ring-primary/20">
-                      <option>English (US)</option>
-                      <option>Spanish</option>
-                      <option>French</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-slate-600 uppercase">Currency</label>
-                    <select className="w-full mt-2 p-2 border border-slate-200 rounded-lg font-roboto focus:ring-2 focus:ring-primary/20">
-                      <option>USD ($)</option>
-                      <option>EUR (€)</option>
-                      <option>GBP (£)</option>
-                      <option>INR (₹)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Save Button */}
-              <button className="w-full py-3 px-4 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-all">
-                Save Preferences
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Help & Support Modal */}
-      {showHelpSupport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div 
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setShowHelpSupport(false)}
-          ></div>
-          <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-[#f7f9fc] to-[#f2f4f7] p-6 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="text-2xl font-bold font-poppins text-on-surface">Help & Support</h2>
-              <button
-                onClick={() => setShowHelpSupport(false)}
-                className="p-2 hover:bg-white/50 rounded-lg transition-colors"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* FAQ Section */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Frequently Asked Questions</h4>
-                <div className="space-y-3">
-                  <details className="p-3 bg-slate-50 rounded-lg cursor-pointer group">
-                    <summary className="font-semibold text-slate-700 text-sm flex items-center gap-2">
-                      <span className="material-symbols-outlined text-lg group-open:hidden">add</span>
-                      <span className="material-symbols-outlined text-lg hidden group-open:block">remove</span>
-                      How do I reset my password?
-                    </summary>
-                    <p className="text-xs text-slate-600 mt-2 ml-6">Go to Settings {">"}  Security {">"}  Change Password. Enter your current password and set a new one.</p>
-                  </details>
-                  <details className="p-3 bg-slate-50 rounded-lg cursor-pointer group">
-                    <summary className="font-semibold text-slate-700 text-sm flex items-center gap-2">
-                      <span className="material-symbols-outlined text-lg group-open:hidden">add</span>
-                      <span className="material-symbols-outlined text-lg hidden group-open:block">remove</span>
-                      How do I export my data?
-                    </summary>
-                    <p className="text-xs text-slate-600 mt-2 ml-6">Visit Dashboard {">"}  Export Data to download your financial records in CSV or PDF format.</p>
-                  </details>
-                  <details className="p-3 bg-slate-50 rounded-lg cursor-pointer group">
-                    <summary className="font-semibold text-slate-700 text-sm flex items-center gap-2">
-                      <span className="material-symbols-outlined text-lg group-open:hidden">add</span>
-                      <span className="material-symbols-outlined text-lg hidden group-open:block">remove</span>
-                      What payment methods do you support?
-                    </summary>
-                    <p className="text-xs text-slate-600 mt-2 ml-6">We support bank transfers, credit/debit cards, and digital wallets.</p>
-                  </details>
-                </div>
-              </div>
-
-              {/* Contact Support */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Contact Support</h4>
-                <div className="space-y-3">
-                  <a href="mailto:support@cashmind.com" className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors">
-                    <span className="material-symbols-outlined text-blue-600">mail</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-blue-900">Email Support</p>
-                      <p className="text-xs text-blue-700">support@cashmind.com</p>
-                    </div>
-                  </a>
-                  <a href="tel:+1-800-FINANCE" className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors">
-                    <span className="material-symbols-outlined text-green-600">phone</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-green-900">Phone Support</p>
-                      <p className="text-xs text-green-700">+1 (800) 334-2623 • Available 9 AM - 6 PM EST</p>
-                    </div>
-                  </a>
-                  <a href="#" className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors">
-                    <span className="material-symbols-outlined text-purple-600">chat</span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm text-purple-900">Live Chat</p>
-                      <p className="text-xs text-purple-700">Available now • Average response: 2 minutes</p>
-                    </div>
-                  </a>
-                </div>
-              </div>
-
-              {/* Documentation */}
-              <div>
-                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Resources</h4>
-                <div className="space-y-2">
-                  <a href="#" className="flex items-center gap-2 p-2 text-primary hover:text-primary-container hover:bg-blue-50 rounded-lg transition-colors">
-                    <span className="material-symbols-outlined text-sm">description</span>
-                    <span className="text-sm font-semibold">User Documentation</span>
-                  </a>
-                  <a href="#" className="flex items-center gap-2 p-2 text-primary hover:text-primary-container hover:bg-blue-50 rounded-lg transition-colors">
-                    <span className="material-symbols-outlined text-sm">video_library</span>
-                    <span className="text-sm font-semibold">Video Tutorials</span>
-                  </a>
-                  <a href="#" className="flex items-center gap-2 p-2 text-primary hover:text-primary-container hover:bg-blue-50 rounded-lg transition-colors">
-                    <span className="material-symbols-outlined text-sm">schedule</span>
-                    <span className="text-sm font-semibold">Webinars & Events</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Version Info */}
-              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <p className="text-[10px] text-slate-600 text-center">
-                  CashMind v2.4.0 • Build 2026.01 • © 2026 CashMind Inc.
-                </p>
+                {isEditMode ? (
+                  <>
+                    <button
+                      onClick={handleSaveProfile}
+                      disabled={editLoading}
+                      className="flex-1 py-2 px-4 bg-primary text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-60 transition-all"
+                    >
+                      {editLoading ? 'Saving...' : 'Save Changes'}
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      disabled={editLoading}
+                      className="flex-1 py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 disabled:opacity-60 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleEditClick}
+                      className="flex-1 py-2 px-4 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-base">edit</span>
+                      Edit Profile
+                    </button>
+                    <button
+                      onClick={() => setShowProfileModal(false)}
+                      className="flex-1 py-2 px-4 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -20,9 +20,8 @@ export default function Forecast() {
   useEffect(() => {
     Promise.all([getForecast(), getFinancialState()])
       .then(([fc, fs]) => {
-        // Sample every 3 days for chart clarity
-        const sampled = fc.data.filter((_, i) => i % 3 === 0);
-        setForecastData(sampled);
+        // Use full dataset without sampling - no need to lose data
+        setForecastData(fc.data);
         setMetrics(fc.metrics);
         setState(fs.data);
       })
@@ -83,7 +82,7 @@ export default function Forecast() {
       {loading ? (
         <Skeleton className="h-80 w-full rounded-2xl" />
       ) : (
-        <ForecastChart data={chartData} title="Cash Flow Forecast — Monte Carlo (10,000 paths, 30-day horizon)" showMetrics={true} />
+        <ForecastChart data={chartData} title="Cash Flow Forecast — Monte Carlo (10,000 paths, 30-day horizon)" showMetrics={true} useApi={false} />
       )}
 
       {/* Bottom Tables */}
