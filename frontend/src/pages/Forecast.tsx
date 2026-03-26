@@ -86,7 +86,7 @@ export default function Forecast() {
       )}
 
       {/* Bottom Tables */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
         {/* 7-Day Run Rate */}
         <div className="neumorphic-card rounded-2xl flex flex-col overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
@@ -94,26 +94,26 @@ export default function Forecast() {
             <span className="text-primary text-xs font-bold">Monte Carlo median</span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">P10 (Bear)</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">P50 (Base)</th>
-                  <th className="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">P90 (Bull)</th>
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest">P10</th>
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest">P50</th>
+                  <th className="px-2 sm:px-6 py-2 sm:py-3 text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">P90</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {loading ? (
                   [1, 2, 3, 4, 5, 6, 7].map(i => (
-                    <tr key={i}><td colSpan={4} className="px-6 py-4"><Skeleton className="h-4 w-full" /></td></tr>
+                    <tr key={i}><td colSpan={4} className="px-2 sm:px-6 py-2 sm:py-4"><Skeleton className="h-4 w-full" /></td></tr>
                   ))
                 ) : first7.map((d, i) => (
                   <tr key={i} className={`hover:bg-slate-50 transition-colors ${i % 2 === 1 ? 'bg-slate-50/50' : ''}`}>
-                    <td className="px-6 py-3 text-sm font-semibold">{d.day}</td>
-                    <td className="px-6 py-3 text-sm text-error font-medium">{fmt(d.p10)}</td>
-                    <td className="px-6 py-3 text-sm font-bold text-primary">{fmt(d.p50)}</td>
-                    <td className="px-6 py-3 text-sm text-emerald-600 font-medium text-right">{fmt(d.p90)}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-[10px] sm:text-sm font-semibold">{d.day}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-[10px] sm:text-sm text-error font-medium">{fmt(d.p10)}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-[10px] sm:text-sm font-bold text-primary">{fmt(d.p50)}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-[10px] sm:text-sm text-emerald-600 font-medium text-right">{fmt(d.p90)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -123,8 +123,8 @@ export default function Forecast() {
 
         {/* Key Financial Ratios */}
         <div className="neumorphic-card rounded-2xl flex flex-col overflow-hidden">
-          <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-            <h3 className="font-bold font-headline">Financial Health Summary</h3>
+          <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center bg-white gap-2">
+            <h3 className="font-bold font-headline text-sm sm:text-base">Financial Health Summary</h3>
             <div className="flex items-center gap-1">
               <span className={`w-2 h-2 rounded-full ${(state?.days_to_zero_runway ?? 999) > 60 ? 'bg-emerald-500' : 'bg-error'}`}></span>
               <span className={`text-[10px] font-bold uppercase ${(state?.days_to_zero_runway ?? 999) > 60 ? 'text-emerald-600' : 'text-error'}`}>
@@ -132,7 +132,7 @@ export default function Forecast() {
               </span>
             </div>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-2 sm:space-y-4">
             {[
               { label: 'Current Cash Balance', value: fmt(state?.current_cash_balance ?? 0), color: 'text-primary' },
               { label: 'Accounts Payable (Total)', value: fmt(state?.accounts_payable ?? 0), color: 'text-error' },
@@ -142,10 +142,10 @@ export default function Forecast() {
               { label: 'Working Capital (AR − AP)', value: fmt(state?.working_capital ?? 0), color: (state?.working_capital ?? 0) > 0 ? 'text-emerald-600' : 'text-error' },
               { label: 'Days to Zero Runway', value: state?.days_to_zero_runway === 999 ? '∞ days' : `${Math.round(state?.days_to_zero_runway ?? 0)} days`, color: (state?.days_to_zero_runway ?? 999) > 60 ? 'text-emerald-600' : 'text-error' },
             ].map(({ label, value, color }) => (
-              <div key={label} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
-                <span className="text-sm text-slate-500 font-roboto">{label}</span>
+              <div key={label} className="flex justify-between items-center py-1.5 sm:py-2 border-b border-slate-100 last:border-0 gap-2">
+                <span className="text-xs sm:text-sm text-slate-500 font-roboto">{label}</span>
                 {loading ? <Skeleton className="h-5 w-28" /> : (
-                  <span className={`text-sm font-bold font-poppins ${color}`}>{value}</span>
+                  <span className={`text-xs sm:text-sm font-bold font-poppins ${color} text-right`}>{value}</span>
                 )}
               </div>
             ))}

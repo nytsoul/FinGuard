@@ -120,8 +120,8 @@ export default function Transactions() {
         />
       </div>
 
-      {/* Transaction Table */}
-      <div className="neumorphic-card overflow-hidden">
+      {/* Transaction Table - Desktop View */}
+      <div className="hidden sm:block neumorphic-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-surface-container-low border-b border-slate-100">
@@ -177,6 +177,64 @@ export default function Transactions() {
             <div className="px-4 py-12 text-center text-slate-400 text-sm font-roboto">No transactions match your filter.</div>
           )}
         </div>
+      </div>
+
+      {/* Transaction Cards - Mobile View */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          [1,2,3,4,5].map(i => <Skeleton key={i} className="h-24 w-full rounded-xl" />)
+        ) : filtered.length === 0 ? (
+          <div className="neumorphic-card p-6 text-center text-slate-400 text-sm font-roboto">
+            No transactions match your filter.
+          </div>
+        ) : (
+          filtered.map(tx => (
+            <div key={tx.id} className="neumorphic-card p-4 space-y-3">
+              {/* Header with vendor and direction */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${tx.direction === 'credit' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}`}>
+                    {tx.vendor[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm truncate">{tx.vendor}</p>
+                    <p className="text-xs text-slate-500">{tx.date}</p>
+                  </div>
+                </div>
+                <span className={`font-bold text-sm ${tx.direction === 'credit' ? 'text-emerald-600' : 'text-error'}`}>
+                  {tx.direction === 'credit' ? '+' : '−'}{fmt(tx.amount)}
+                </span>
+              </div>
+
+              {/* Details */}
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Source</p>
+                  <span className={`text-[9px] font-bold px-2 py-1 rounded-full ${SOURCE_BADGE[tx.source] ?? 'bg-slate-100 text-slate-600'}`}>
+                    {SOURCE_LABEL[tx.source] ?? tx.source}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Confidence</p>
+                  <div className="flex items-center gap-1">
+                    <div className="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${tx.confidence * 100}%` }} />
+                    </div>
+                    <span className="text-[9px] text-slate-500">{(tx.confidence * 100).toFixed(0)}%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Narration */}
+              {tx.narration && (
+                <div>
+                  <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Note</p>
+                  <p className="text-xs text-slate-600 line-clamp-2">{tx.narration}</p>
+                </div>
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
