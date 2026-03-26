@@ -1,0 +1,19 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\HP\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\HP\Desktop\SNUC_2026\FinGuard\backend
+plugins: anyio-4.8.0, asyncio-1.3.0, cov-7.0.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 9 items
+
+tests/test_api.py::test_forecast_contract PASSED                         [ 11%]
+tests/test_api.py::test_transactions_feed_shape PASSED                   [ 22%]
+tests/test_api.py::test_reconciliation_summary PASSED                    [ 33%]
+tests/test_api.py::test_decision_ranking_and_scenarios PASSED            [ 44%]
+tests/test_api.py::test_actions_and_payments PASSED                      [ 55%]
+tests/test_api.py::test_health_endpoint PASSED                           [ 66%]
+tests/test_api.py::test_invoices_endpoint PASSED                         [ 77%]
+tests/test_api.py::test_llm_action_has_llm_flag PASSED                   [ 88%]
+tests/test_api.py::test_ingest_endpoint PASSED                           [100%]
+
+============================== 9 passed in 2.04s ==============================

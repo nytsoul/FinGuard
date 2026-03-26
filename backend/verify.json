@@ -1,0 +1,23 @@
+﻿{
+  "dataset_counts": {
+    "aa": 9,
+    "gst": 9,
+    "ocr": 5
+  },
+  "model_type": "analytic_heuristic",
+  "shap_available": true,
+  "ingestion_count": 23,
+  "deduplicated_count": 21,
+  "duplicates_removed": 2,
+  "obligations_ranked": 12,
+  "top_vendor": "Himalaya Wire & Cables Pvt Ltd",
+  "top_topsis": 0.9496,
+  "best_strategy": "smallest_first",
+  "shortfall_prob": 0.0,
+  "cash_balance": 2251550.0,
+  "accounts_payable": 1223950.0,
+  "ar_weighted": 899090.0,
+  "days_to_zero": 69.31,
+  "data_source": "external",
+  "pipeline_secs": 0.77
+}

@@ -1,0 +1,13 @@
+fastapi>=0.111.0
+uvicorn[standard]
+httpx
+numpy
+python-dotenv
+pytest
+requests
+rapidfuzz
+scipy
+pandas
+xgboost>=2.0
+shap
+pydantic>=2.0
