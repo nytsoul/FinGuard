@@ -26,6 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     Promise.all([getFinancialState(), getDecisionRanking(), getForecast()])
       .then(([fs, dr, fc]) => {
+        console.log('✅ Dashboard data loaded:', { fs, dr, fc });
         setState(fs.data);
         setObligations(dr.data.slice(0, 3));
         // Build chart-compatible data from forecast
@@ -33,7 +34,10 @@ export default function Dashboard() {
         setForecastDays(sampled);
         setShortfallProb(fc.metrics.shortfall_probability);
       })
-      .catch(e => setError(e.message))
+      .catch(e => {
+        console.error('❌ API Error:', e.message);
+        setError(e.message);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -50,7 +54,8 @@ export default function Dashboard() {
   const riskBorderColor = shortfallProb > 0.3 ? 'border-error/20' : shortfallProb > 0.1 ? 'border-amber-200' : 'border-emerald-200';
 
   return (
-    <div className="overflow-y-auto p-4 lg:p-8 space-y-6 lg:space-y-8 max-w-[1600px] mx-auto">
+    <div className="w-full overflow-y-auto space-y-6 lg:space-y-8">
+      <div className="px-4 lg:px-8 py-4 lg:py-8 space-y-6 lg:space-y-8">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
           ⚠️ Backend error: {error} — make sure the server is running on port 8001.
@@ -269,6 +274,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

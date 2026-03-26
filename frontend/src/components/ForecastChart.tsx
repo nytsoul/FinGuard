@@ -12,7 +12,7 @@ import {
   ReferenceLine
 } from 'recharts';
 
-import { getForecast, type ForecastApiResponse } from '../lib/api';
+import { getForecast, type ForecastResponse } from '../lib/api';
 import { downloadTextFile, exportElementToPdf, toCsv } from '../lib/export';
 
 interface ForecastChartProps {
@@ -22,6 +22,15 @@ interface ForecastChartProps {
   useApi?: boolean;
   pollIntervalMs?: number;
 }
+
+type ForecastChartPoint = {
+  name: string;
+  expected: number;
+  p10: number;
+  p90: number;
+  median?: number;
+  p50?: number;
+};
 
 const MONTE_CARLO_DATA = [
   { name: 'Sept 01', expected: 1200000, p10: 1200000, p90: 1200000 },
@@ -55,7 +64,7 @@ export default function ForecastChart({
   const [isLive, setIsLive] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [api, setApi] = useState<ForecastApiResponse | null>(null);
+  const [api, setApi] = useState<ForecastResponse | null>(null);
 
   const refresh = async () => {
     if (!useApi) return;
@@ -87,7 +96,7 @@ export default function ForecastChart({
   }, [useApi, isLive, pollIntervalMs]);
 
   const chartData = useMemo(() => {
-    const fromApi = api?.data?.map((d) => ({
+    const fromApi = api?.data?.map((d): ForecastChartPoint => ({
       name: d.day,
       expected: d.p50 ?? d.median,
       p10: d.p10,
@@ -96,12 +105,12 @@ export default function ForecastChart({
       p50: d.p50
     }));
 
-    const raw = fromApi && fromApi.length ? fromApi : data;
+    const raw: ForecastChartPoint[] = (fromApi && fromApi.length ? fromApi : data) as ForecastChartPoint[];
 
     const days = Math.max(1, Math.min(Number(timeRange || '90'), raw.length));
     const sliced = raw.slice(0, days);
 
-    const getIndex = (d: any) => {
+    const getIndex = (d: ForecastChartPoint) => {
       const s = String(d.name ?? '');
       const match = s.match(/(\d+)/);
       return match ? Number(match[1]) : null;
@@ -110,7 +119,7 @@ export default function ForecastChart({
     const end = endDay ? Number(endDay) : null;
     if (!start && !end) return sliced;
 
-    return sliced.filter((d) => {
+    return sliced.filter((d: ForecastChartPoint) => {
       const idx = getIndex(d);
       if (!idx) return true;
       if (start && idx < start) return false;

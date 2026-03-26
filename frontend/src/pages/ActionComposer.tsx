@@ -62,7 +62,7 @@ export default function ActionComposer() {
   };
 
   return (
-    <div className="overflow-y-auto p-4 lg:p-8 space-y-6 max-w-6xl mx-auto">
+    <div className="overflow-y-auto p-4 lg:p-8 space-y-6 w-full">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
           ⚠️ {error}

@@ -1,6 +1,6 @@
 // ─── Base ────────────────────────────────────────────────────────────────────
 
-const DEFAULT_API_BASE_URL = 'http://localhost:8000';
+const DEFAULT_API_BASE_URL = 'http://localhost:8001';
 
 export function getApiBaseUrl(): string {
   return (import.meta as any).env?.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;

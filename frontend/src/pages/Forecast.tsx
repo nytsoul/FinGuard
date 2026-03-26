@@ -42,7 +42,7 @@ export default function Forecast() {
   const first7 = forecastData.slice(0, 7);
 
   return (
-    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="overflow-y-auto p-4 sm:p-6 lg:p-8 w-full space-y-8">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
           ⚠️ Backend error: {error}

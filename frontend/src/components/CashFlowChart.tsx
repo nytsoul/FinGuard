@@ -393,19 +393,18 @@ export default function CashFlowChart({
               dataKey="name" 
               tick={{ fill: '#71717a', fontSize: 12 }}
               tickFormatter={(v: any) => formatMoney(Number(v))}
-              axisLine={{ stroke: '#d4d4d8', strokeWidth: 1
+              axisLine={{ stroke: '#d4d4d8', strokeWidth: 1 }}
+            />
             <YAxis 
               tick={{ fill: '#64748b', fontSize: 12 }}
               tickFormatter={(v: any) => formatMoney(Number(v))}
               axisLine={{ stroke: '#e2e8f0' }}
             />
-            <Tooltip cod4d4d8"
-              strokeDasharray="3 3"
-              opacity={0.5}
+            <Tooltip content={<CustomTooltip />} />
             <ReferenceLine 
               y={0}
               stroke="#e2e8f0"
-              strokeurl(#colorInflow)ay="3 3"
+              strokeDasharray="3 3"
             />
 
             <Bar 
@@ -417,7 +416,7 @@ export default function CashFlowChart({
               name="Inflow"
             />
             <Bar 
-              dataKeurl(#colorOutflow)low" 
+              dataKey="outflow" 
               fill="#dc2626" 
               radius={[8, 8, 0, 0]}
               isAnimationActive={true}
@@ -426,13 +425,13 @@ export default function CashFlowChart({
             />
             <Line 
               type="monotone" 
-              dataKey="7C3AED" 
+              dataKey="net" 
+              stroke="#7C3AED"
               strokeWidth={3}
               dot={{ fill: '#7C3AED', r: 5, strokeWidth: 2, stroke: '#fff' }}
               activeDot={{ r: 8, fill: '#7C3AED', strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={true}
               animationDuration={800}
-              name="Net FlowDuration={800}
               name="Net"
             />
             
