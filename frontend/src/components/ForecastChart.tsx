@@ -270,7 +270,7 @@ export default function ForecastChart({
       </div>
 
       {/* Main Chart */}
-      <div ref={chartRef} className="neumorphic-card rounded-2xl p-6 bg-gradient-to-br from-white to-slate-50">
+      <div ref={chartRef} className="neumorphic-card rounded-2xl p-6 bg-gradient-to-br from-white via-purple-50/20 to-slate-50">
         <ResponsiveContainer width="100%" height={450}>
           <ComposedChart
             data={chartData}
@@ -282,21 +282,21 @@ export default function ForecastChart({
                 <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="fillExpected" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#004ac6" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#004ac6" stopOpacity={0} />
+                <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#7C3AED" stopOpacity={0} />
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.3} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#d4d4d8" opacity={0.2} />
             <XAxis
               dataKey="name"
-              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
-              axisLine={{ stroke: '#e2e8f0' }}
+              tick={{ fill: '#71717a', fontSize: 12, fontWeight: 500 }}
+              axisLine={{ stroke: '#d4d4d8', strokeWidth: 1 }}
             />
             <YAxis
               tickFormatter={formatCurrency}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-              axisLine={{ stroke: '#e2e8f0' }}
+              tick={{ fill: '#71717a', fontSize: 12 }}
+              axisLine={{ stroke: '#d4d4d8', strokeWidth: 1 }}
             />
             <Tooltip content={<CustomTooltip />} />
 
@@ -324,10 +324,10 @@ export default function ForecastChart({
             <Line
               type="monotone"
               dataKey="expected"
-              stroke="#004ac6"
+              stroke="#7C3AED"
               strokeWidth={4}
               dot={{
-                fill: '#004ac6',
+                fill: '#7C3AED',
                 r: 6,
                 strokeWidth: 2,
                 stroke: '#ffffff'
@@ -344,7 +344,7 @@ export default function ForecastChart({
             <Line
               type="monotone"
               dataKey="p10"
-              stroke="#dc2626"
+              stroke="#ef4444"
               strokeWidth={2}
               strokeDasharray="5 5"
               dot={false}

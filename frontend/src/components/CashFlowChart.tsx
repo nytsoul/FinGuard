@@ -368,7 +368,7 @@ export default function CashFlowChart({
       </div>
 
       {/* Chart */}
-      <div ref={chartRef} className="neumorphic-card rounded-2xl p-6 bg-gradient-to-br from-white to-slate-50">
+      <div ref={chartRef} className="neumorphic-card rounded-2xl p-6 bg-gradient-to-br from-white via-purple-50/30 to-slate-50">
         <ResponsiveContainer width="100%" height={400}>
           <ComposedChart
             data={visibleData}
@@ -376,31 +376,36 @@ export default function CashFlowChart({
           >
             <defs>
               <linearGradient id="colorFlow" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#004ac6" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#004ac6" stopOpacity={0} />
+                <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#7C3AED" stopOpacity={0.1} />
               </linearGradient>
-              <linearGradient id="colorWarn" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+              <linearGradient id="colorOutflow" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.9} />
+                <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
+              </linearGradient>
+              <linearGradient id="colorInflow" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.9} />
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.3} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#d4d4d8" opacity={0.2} />
             <XAxis 
               dataKey="name" 
-              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
-              axisLine={{ stroke: '#e2e8f0' }}
-            />
+              tick={{ fill: '#71717a', fontSize: 12 }}
+              tickFormatter={(v: any) => formatMoney(Number(v))}
+              axisLine={{ stroke: '#d4d4d8', strokeWidth: 1
             <YAxis 
               tick={{ fill: '#64748b', fontSize: 12 }}
               tickFormatter={(v: any) => formatMoney(Number(v))}
               axisLine={{ stroke: '#e2e8f0' }}
             />
-            <Tooltip content={<CustomTooltip />} />
-            
+            <Tooltip cod4d4d8"
+              strokeDasharray="3 3"
+              opacity={0.5}
             <ReferenceLine 
               y={0}
               stroke="#e2e8f0"
-              strokeDasharray="3 3"
+              strokeurl(#colorInflow)ay="3 3"
             />
 
             <Bar 
@@ -412,7 +417,7 @@ export default function CashFlowChart({
               name="Inflow"
             />
             <Bar 
-              dataKey="outflow" 
+              dataKeurl(#colorOutflow)low" 
               fill="#dc2626" 
               radius={[8, 8, 0, 0]}
               isAnimationActive={true}
@@ -421,13 +426,13 @@ export default function CashFlowChart({
             />
             <Line 
               type="monotone" 
-              dataKey="net" 
-              stroke="#004ac6" 
+              dataKey="7C3AED" 
               strokeWidth={3}
-              dot={{ fill: '#004ac6', r: 5 }}
-              activeDot={{ r: 7 }}
+              dot={{ fill: '#7C3AED', r: 5, strokeWidth: 2, stroke: '#fff' }}
+              activeDot={{ r: 8, fill: '#7C3AED', strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={true}
               animationDuration={800}
+              name="Net FlowDuration={800}
               name="Net"
             />
             

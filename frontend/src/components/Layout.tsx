@@ -48,12 +48,12 @@ export default function Layout() {
 
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 py-4 mb-4 rounded-2xl neumorphic-elevated mt-8 lg:mt-0">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#004ac6] to-[#0055e0] flex items-center justify-center text-white shadow-lg">
-            <span className="material-symbols-outlined">account_balance_wallet</span>
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all">
+            <span className="material-symbols-outlined">security</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold font-poppins text-[#004ac6] tracking-tight">CashMind</h1>
-            <p className="text-[9px] uppercase tracking-[0.12em] text-slate-500 font-semibold">Financial Architect</p>
+            <h1 className="text-lg font-bold font-poppins text-[#7C3AED] tracking-tight">FinGuard</h1>
+            <p className="text-[9px] uppercase tracking-[0.12em] text-slate-500 font-semibold">Financial Intelligence</p>
           </div>
         </div>
         
@@ -68,7 +68,7 @@ export default function Layout() {
                 cn(
                   'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm',
                   isActive
-                    ? 'bg-white text-[#004ac6] neumorphic-card font-semibold scale-[0.98]'
+                    ? 'bg-gradient-to-r from-purple-50 to-violet-50 text-[#7C3AED] neumorphic-card font-semibold scale-[0.98] shadow-md'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
                 )
               }
@@ -88,7 +88,7 @@ export default function Layout() {
               cn(
                 'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-sm',
                 isActive
-                  ? 'bg-white text-[#004ac6] neumorphic-card font-semibold scale-[0.98]'
+                  ? 'bg-gradient-to-r from-purple-50 to-violet-50 text-[#7C3AED] neumorphic-card font-semibold scale-[0.98] shadow-md'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/40'
               )
             }
