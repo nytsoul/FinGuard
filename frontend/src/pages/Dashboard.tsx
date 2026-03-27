@@ -152,7 +152,7 @@ export default function Dashboard() {
               </p>
             </div>
             <button
-              onClick={() => navigate('/decision-engine')}
+              onClick={() => navigate('/dashboard/decision-engine')}
               className="w-full py-3 bg-primary text-white rounded-xl font-bold font-inter shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all text-sm"
             >
               VIEW MITIGATION STRATEGY
@@ -190,7 +190,7 @@ export default function Dashboard() {
         <div className="neumorphic-card overflow-hidden">
           <div className="p-4 lg:p-6 flex justify-between items-center bg-white">
             <h3 className="font-bold text-sm font-poppins text-on-surface">Upcoming Payables</h3>
-            <span onClick={() => navigate('/decision-engine')} className="text-xs font-bold text-primary cursor-pointer hover:underline font-inter">View All</span>
+            <span onClick={() => navigate('/dashboard/decision-engine')} className="text-xs font-bold text-primary cursor-pointer hover:underline font-inter">View All</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs lg:text-sm">
@@ -233,7 +233,7 @@ export default function Dashboard() {
         <div className="neumorphic-card overflow-hidden">
           <div className="p-4 lg:p-6 flex justify-between items-center bg-white">
             <h3 className="font-bold text-sm font-poppins text-on-surface">TOPSIS Decision Ranking</h3>
-            <span onClick={() => navigate('/decision-engine')} className="text-xs font-bold text-primary cursor-pointer hover:underline font-inter">Full Ranking</span>
+            <span onClick={() => navigate('/dashboard/decision-engine')} className="text-xs font-bold text-primary cursor-pointer hover:underline font-inter">Full Ranking</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs lg:text-sm">

@@ -12,11 +12,11 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 
 const NAV_LINKS = [
   { name: 'Dashboard', path: '/dashboard', icon: 'dashboard' },
-  { name: 'Decisions', path: '/decision-engine', icon: 'insights' },
-  { name: 'Forecast', path: '/forecast', icon: 'query_stats' },
-  { name: 'Transactions', path: '/transactions', icon: 'receipt_long' },
-  { name: 'Invoices', path: '/invoices', icon: 'description' },
-  { name: 'Actions', path: '/actions', icon: 'bolt' },
+  { name: 'Decisions', path: '/dashboard/decision-engine', icon: 'insights' },
+  { name: 'Forecast', path: '/dashboard/forecast', icon: 'query_stats' },
+  { name: 'Transactions', path: '/dashboard/transactions', icon: 'receipt_long' },
+  { name: 'Invoices', path: '/dashboard/invoices', icon: 'description' },
+  { name: 'Actions', path: '/dashboard/actions', icon: 'bolt' },
 ];
 
 export default function Layout() {

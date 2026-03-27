@@ -80,24 +80,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const isNetworkError = (error: any): boolean => {
+    const errorMessage = error?.message?.toLowerCase() || '';
+    return (
+      errorMessage.includes('fetch') ||
+      errorMessage.includes('network') ||
+      errorMessage.includes('disconnected') ||
+      errorMessage.includes('cors') ||
+      error?.status === 0
+    );
+  };
+
   useEffect(() => {
     let mounted = true;
+    let subscriptionUnsubscribe: (() => void) | null = null;
 
     // Initialize session with timeout fallback
     const initAuth = async () => {
       try {
-        const { data, error } = await supabase.auth.getSession();
+        // Add a race condition: if auth takes too long, timeout
+        const timeoutPromise = new Promise<{data: {session: null}, error: string}>((resolve) => {
+          setTimeout(() => resolve({data: {session: null}, error: 'timeout'}), 2000);
+        });
+        
+        const getSessionPromise = supabase.auth.getSession().catch((err) => {
+          if (isNetworkError(err)) {
+            console.warn('⚠️ Network error during auth initialization - proceeding offline');
+            return { data: { session: null }, error: err.message };
+          }
+          throw err;
+        });
+
+        const { data, error } = await Promise.race([
+          getSessionPromise,
+          timeoutPromise
+        ]);
+
         if (!mounted) return;
         
-        if (error) {
-          console.error('Failed to get session:', error);
+        if (error || !data.session) {
+          console.log('No active session found (expected for new users or offline mode)');
           setSession(null);
           setUser(null);
           setUserProfile(null);
         } else {
           setSession(data.session);
-          setUser(data.session?.user ?? null);
-          await loadProfile(data.session?.user ?? null);
+          setUser(data.session.user);
+          await loadProfile(data.session.user);
         }
       } catch (err) {
         console.error('Session initialization error:', err);
@@ -111,38 +140,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    // Set a timeout to force loading to false after 5 seconds
-    const timeout = setTimeout(() => {
-      if (mounted && loading) {
-        console.warn('Session loading timeout - forcing completion');
-        setLoading(false);
-      }
-    }, 5000);
-
     initAuth();
 
-    const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      if (!mounted) return;
-      console.log('🔐 Auth state changed:', _event, !!nextSession?.user);
+    // Set up auth state listener immediately to catch auth changes
+    try {
+      const { data } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+        if (!mounted) return;
+        console.log('🔐 Auth state changed:', _event, !!nextSession?.user);
+        
+        // Explicitly handle logout event
+        if (_event === 'SIGNED_OUT') {
+          console.log('🔐 SIGNED_OUT detected - clearing auth state');
+          setSession(null);
+          setUser(null);
+          setUserProfile(null);
+        } else if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED') {
+          setSession(nextSession);
+          setUser(nextSession?.user ?? null);
+          await loadProfile(nextSession?.user ?? null);
+        }
+        setLoading(false);
+      });
       
-      // Explicitly handle logout event
-      if (_event === 'SIGNED_OUT') {
-        console.log('🔐 SIGNED_OUT detected - clearing auth state');
-        setSession(null);
-        setUser(null);
-        setUserProfile(null);
-      } else {
-        setSession(nextSession);
-        setUser(nextSession?.user ?? null);
-        await loadProfile(nextSession?.user ?? null);
-      }
-      setLoading(false);
-    });
+      subscriptionUnsubscribe = data.subscription.unsubscribe;
+    } catch (err) {
+      console.warn('Could not set up auth subscription:', err);
+    }
 
     return () => {
       mounted = false;
-      clearTimeout(timeout);
-      subscription.subscription.unsubscribe();
+      subscriptionUnsubscribe?.();
     };
   }, []);
 
@@ -152,19 +179,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     userProfile,
     loading,
     signIn: async (email: string, password: string) => {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error: error ? new Error(error.message) : null };
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          if (isNetworkError(error)) {
+            return { error: new Error('Network error: Please check your internet connection and try again') };
+          }
+          return { error: new Error(error.message) };
+        }
+        return { error: null };
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Sign in failed';
+        if (isNetworkError(err)) {
+          return { error: new Error('Network error: Please check your internet connection and try again') };
+        }
+        return { error: new Error(errorMsg) };
+      }
     },
     signUp: async (email: string, password: string) => {
-      const { error } = await supabase.auth.signUp({ email, password });
-      return { error: error ? new Error(error.message) : null };
+      try {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          if (isNetworkError(error)) {
+            return { error: new Error('Network error: Please check your internet connection and try again') };
+          }
+          return { error: new Error(error.message) };
+        }
+        return { error: null };
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Sign up failed';
+        if (isNetworkError(err)) {
+          return { error: new Error('Network error: Please check your internet connection and try again') };
+        }
+        return { error: new Error(errorMsg) };
+      }
     },
     signInWithGoogle: async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin }
-      });
-      return { error: error ? new Error(error.message) : null };
+      try {
+        // Get the proper redirect URL
+        const redirectUrl = `${window.location.origin}/dashboard`;
+        
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: redirectUrl,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent'
+            }
+          }
+        });
+        
+        if (error) {
+          if (isNetworkError(error)) {
+            return { error: new Error('Network error: Please check your internet connection and try again') };
+          }
+          return { error: new Error(error.message) };
+        }
+        return { error: null };
+      } catch (err) {
+        const errorMsg = err instanceof Error ? err.message : 'Google sign in failed';
+        if (isNetworkError(err)) {
+          return { error: new Error('Network error: Please check your internet connection and try again') };
+        }
+        return { error: new Error(errorMsg) };
+      }
     },
     signOut: async () => {
       const { error } = await supabase.auth.signOut();

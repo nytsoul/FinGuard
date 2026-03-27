@@ -43,10 +43,18 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     setError('');
-    const { error: err } = await signInWithGoogle();
     
-    if (err) {
-      setError(err.message);
+    try {
+      const { error: err } = await signInWithGoogle();
+      
+      if (err) {
+        setError(err.message);
+        setGoogleLoading(false);
+      }
+      // If no error, Supabase will redirect the user to Google OAuth and then back to /dashboard
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to sign in with Google';
+      setError(errorMsg);
       setGoogleLoading(false);
     }
   };
