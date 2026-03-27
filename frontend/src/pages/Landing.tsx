@@ -93,7 +93,7 @@ export default function Landing() {
       <BackgroundCarousel />
 
       {/* Header */}
-      <header className="relative z-10 flex justify-between items-center px-4 lg:px-8 py-6 animate-fadeIn max-w-[1500px] w-full mx-auto">
+      <header className="relative z-10 flex justify-between items-center px-4 lg:px-8 py-6 animate-fadeIn max-w-[2000px] w-full mx-auto">
         <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#004ac6] to-[#0055e0] flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
             <span className="material-symbols-outlined">account_balance_wallet</span>
@@ -120,7 +120,7 @@ export default function Landing() {
 
       {/* Hero Section */}
       <main className="relative z-10 flex-1 flex items-center justify-center px-4 lg:px-8 py-12">
-        <div className="max-w-[1500px] w-full">
+        <div className="max-w-[1800px] w-full">
           {/* Hero Content */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
             {/* Left: Content */}
